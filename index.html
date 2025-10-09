@@ -1,43 +1,43 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود - سفارت جمهوری ایتالیا</title>
+    <title>Login - Embassy of the Italian Republic</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="login-container">
         
         <div class="header-logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Italy_Flag.svg" alt="لوگوی جمهوری ایتالیا" class="logo">
-            <h1>سفارت جمهوری ایتالیا</h1>
-            <p>بخش خدمات ویزا و کنسولی</p>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Italy_Flag.svg" alt="Flag of the Italian Republic" class="logo">
+            <h1>Embassy of the Italian Republic</h1>
+            <p>Visa and Consular Services Department</p>
         </div>
 
         <form id="loginForm">
             <div class="input-group">
-                <label for="username">نام کاربری سازمانی (USER NAME)</label>
+                <label for="username">Organizational Username (USER NAME)</label>
                 <input type="text" id="username" required>
             </div>
             <div class="input-group">
-                <label for="password">رمز عبور (PASSWORD)</label>
+                <label for="password">Password (PASSWORD)</label>
                 <input type="password" id="password" required>
             </div>
             <div class="input-group">
-                <label for="ceu">شماره پرسنلی/کد ثبت (CEU NUMBER)</label>
+                <label for="ceu">Personnel/Registration Code (CEU NUMBER)</label>
                 <input type="text" id="ceu" required>
             </div>
             
-            <button type="submit" id="loginButton">ورود به پنل</button>
+            <button type="submit" id="loginButton">Login</button>
 
             <div id="loadingIndicator" class="loading-overlay" style="display: none;">
-                <img src="https://i.imgur.com/gK9q0n5.gif" alt="در حال بررسی..." class="loading-gif">
-                <p>در حال اعتبارسنجی داده‌ها...</p>
+                <img src="https://i.imgur.com/gK9q0n5.gif" alt="Checking credentials..." class="loading-gif">
+                <p>Authenticating credentials...</p>
             </div>
 
-            <p id="errorMessage" class="error-message" style="display: none;">خطا: اطلاعات وارد شده (نام کاربری، رمز عبور یا کد ثبت) نامعتبر است.</p>
+            <p id="errorMessage" class="error-message" style="display: none;">Error: Invalid Username, Password, or CEU Number.</p>
         </form>
     </div>
 
@@ -51,46 +51,45 @@
             const errorMessage = document.getElementById('errorMessage');
             const loadingIndicator = document.getElementById('loadingIndicator');
             
-            // نمایش GIF لودینگ و مخفی کردن پیام خطا
+            // Show loading GIF and hide error message
             errorMessage.style.display = 'none';
             loadingIndicator.style.display = 'flex'; 
 
-            // لینک مخصوصی که کاربر باید در صورت موفقیت به آن هدایت شود
-            const successLink = 'https://www.italy-embassy.com/panel'; // ⚠️ لینک نهایی خود را اینجا قرار دهید
+            // The specific link the user should be redirected to upon success
+            const successLink = 'https://www.italy-embassy.com/official-portal'; // ⚠️ Change this to your final success URL
 
-            // ایجاد تاخیر مصنوعی برای مشاهده لودینگ GIF در محیط تستی
+            // Add an artificial delay to better observe the loading GIF (Remove in production)
             await new Promise(resolve => setTimeout(resolve, 1500)); 
 
             try {
-                // ۱. خواندن فایل DATA.JSON
+                // 1. Read DATA.JSON file
                 const response = await fetch('data.json');
                 if (!response.ok) {
-                    throw new Error('خطا در دسترسی به پایگاه داده.');
+                    throw new Error('Database access error.');
                 }
                 const users = await response.json();
 
-                // ۲. بررسی مطابقت اطلاعات
+                // 2. Check for credential match
                 const userFound = users.find(user => 
                     user.USER_NAME === username &&
                     user.PASSWORD === password &&
                     user.CEU_NUMBER === ceu
                 );
 
-                // مخفی کردن لودینگ پس از اتمام بررسی
+                // Hide loading after check is complete
                 loadingIndicator.style.display = 'none';
 
                 if (userFound) {
-                    // ۳. مطابقت موفق: هدایت
-                    // alert('ورود موفقیت آمیز! در حال هدایت...');
+                    // 3. Success: Redirect
                     window.location.href = successLink; 
                 } else {
-                    // ۴. عدم مطابقت: نمایش پیام خطا
+                    // 4. Failure: Display error message
                     errorMessage.style.display = 'block';
                 }
             } catch (error) {
-                console.error('خطای فنی در اتصال:', error);
+                console.error('Connection error:', error);
                 loadingIndicator.style.display = 'none';
-                errorMessage.textContent = 'خطای ارتباط با سرور. لطفاً با بخش IT تماس بگیرید.';
+                errorMessage.textContent = 'Server connection error. Please contact the IT department.';
                 errorMessage.style.display = 'block';
             }
         });
