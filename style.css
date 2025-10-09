@@ -1,48 +1,53 @@
 body {
-    font-family: 'Vazirmatn', Tahoma, sans-serif;
-    background-color: #e6e9f0; /* پس‌زمینه خاکستری روشن اداری */
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #f5f5f5; /* Light gray background */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    direction: rtl; 
-    text-align: right;
+    direction: ltr; 
+    text-align: left;
 }
 
 .login-container {
     background: #ffffff;
     padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* سایه سنگین‌تر */
-    width: 400px;
-    border-top: 5px solid #009246; /* خط سبز پرچم ایتالیا */
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 380px;
+    /* Official border using Italian flag colors */
+    border-top: 5px solid #009246; /* Green */
+    border-bottom: 5px solid #ce2b37; /* Red */
 }
 
-/* سبک‌دهی عنوان و لوگو */
+/* Header and Logo Styling */
 .header-logo {
     text-align: center;
     margin-bottom: 30px;
 }
 
 .header-logo .logo {
-    width: 60px; /* اندازه لوگو */
+    width: 70px; 
     height: auto;
     margin-bottom: 10px;
-    border: 1px solid #ce2b37; /* حاشیه قرمز ایتالیا */
+    border: 2px solid #ce2b37; /* Red accent border */
     border-radius: 50%;
 }
 
 .header-logo h1 {
-    font-size: 24px;
-    color: #333333;
+    font-size: 22px;
+    color: #1a1a1a;
     margin: 0;
+    font-weight: 700;
 }
 
 .header-logo p {
-    font-size: 14px;
+    font-size: 13px;
     color: #555;
     margin-top: 5px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
 }
 
 .input-group {
@@ -54,69 +59,71 @@ body {
     margin-bottom: 5px;
     font-weight: bold;
     color: #444;
+    font-size: 14px;
 }
 
 .input-group input {
     width: 100%;
     padding: 12px;
-    border: 1px solid #aaa;
-    border-radius: 4px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
     box-sizing: border-box;
-    font-size: 16px;
-    background-color: #f9f9f9;
+    font-size: 15px;
 }
 
 #loginButton {
     width: 100%;
     padding: 12px;
-    background-color: #009246; /* سبز پرچم ایتالیا */
+    background-color: #009246; /* Official Green */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     transition: background-color 0.3s;
     margin-top: 15px;
+    letter-spacing: 0.5px;
 }
 
 #loginButton:hover {
-    background-color: #ce2b37; /* قرمز پرچم ایتالیا */
+    background-color: #ce2b37; /* Official Red on hover */
 }
 
-/* سبک‌دهی پیام خطا */
+/* Error Message Styling */
 .error-message {
-    color: #ce2b37; /* قرمز رسمی */
-    background-color: #fff0f2;
+    color: #ce2b37; /* Official Red */
+    background-color: #fff0f0;
     border: 1px solid #ce2b37;
-    padding: 12px;
-    border-radius: 4px;
+    padding: 10px;
+    border-radius: 3px;
     text-align: center;
     margin-top: 20px;
-    font-size: 15px;
+    font-size: 14px;
 }
 
-/* سبک‌دهی لودینگ GIF */
+/* Loading GIF Styling */
 .loading-overlay {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin-top: 20px;
-    background-color: #f0f8ff; /* رنگ آبی روشن */
+    background-color: #f0f8ff; /* Light blue/white official background */
     border: 1px dashed #007bff;
     padding: 15px;
-    border-radius: 4px;
+    border-radius: 3px;
 }
 
 .loading-gif {
-    width: 50px; /* اندازه کوچک و رسمی */
-    height: 50px;
-    margin-bottom: 10px;
+    width: 40px; 
+    height: 40px;
+    margin-bottom: 8px;
 }
 
 .loading-overlay p {
     margin: 0;
     color: #007bff;
-    font-weight: bold;
+    font-weight: 500;
+    font-size: 14px;
 }
