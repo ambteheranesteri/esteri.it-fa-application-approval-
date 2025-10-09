@@ -3,22 +3,22 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f8ff; /* Alice Blue - Lightest background */
+    background-color: #f0f8ff;
     color: #333;
-    direction: ltr; /* Left-to-right text direction */
+    direction: ltr;
     text-align: left;
 }
 
 h1, h2, h3 {
-    color: #000080; /* Navy Blue for emphasis */
+    color: #000080;
 }
 
 /* Official Header and Footer */
 .official-header {
-    background-color: #191970; /* Midnight Blue - Dark official color */
+    background-color: #191970;
     color: white;
     padding: 10px 20px;
-    border-bottom: 5px solid #87CEEB; /* Sky Blue accent line */
+    border-bottom: 5px solid #87CEEB;
 }
 
 .header-content {
@@ -30,8 +30,17 @@ h1, h2, h3 {
 }
 
 .logo-section .logo {
-    height: 50px; /* Logo size */
+    height: 50px;
     margin-right: 15px;
+}
+
+/* Centered Title Section */
+.title-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .title-section h1 {
@@ -52,7 +61,7 @@ h1, h2, h3 {
 }
 
 .official-footer {
-    background-color: #191970; /* Midnight Blue */
+    background-color: #191970;
     color: white;
     text-align: center;
     padding: 10px 0;
@@ -75,13 +84,13 @@ h1, h2, h3 {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-top: 5px solid #4169E1; /* Royal Blue border */
+    border-top: 5px solid #4169E1;
 }
 
 .form-container h2 {
     text-align: center;
     margin-bottom: 25px;
-    color: #000080; /* Navy Blue */
+    color: #000080;
 }
 
 .form-group {
@@ -105,8 +114,8 @@ h1, h2, h3 {
 }
 
 .official-button {
-    background-color: #87CEEB; /* Sky Blue - Primary Action */
-    color: #000080; /* Navy Blue text for contrast */
+    background-color: #87CEEB;
+    color: #000080;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
@@ -120,7 +129,7 @@ h1, h2, h3 {
 }
 
 .official-button:hover:not(:disabled) {
-    background-color: #4169E1; /* Royal Blue on hover */
+    background-color: #4169E1;
     color: white;
 }
 
@@ -153,12 +162,12 @@ h1, h2, h3 {
 .dashboard-button {
     width: 90%; 
     padding: 15px;
-    background-color: #4169E1; /* Royal Blue for main actions */
+    background-color: #4169E1;
     color: white;
 }
 
 .dashboard-button:hover {
-    background-color: #000080; /* Navy Blue on hover */
+    background-color: #000080;
 }
 
 /* Loading Animation */
@@ -184,7 +193,7 @@ h1, h2, h3 {
     display: none !important;
 }
 
-/* **RESPONSIVENESS (Mobile-first design)** */
+/* Responsiveness */
 @media (max-width: 600px) {
     .official-header {
         padding: 10px;
@@ -204,7 +213,7 @@ h1, h2, h3 {
     }
 
     .contact-info {
-        display: none; 
+        display: none;
     }
 
     .page-content {
@@ -215,6 +224,4 @@ h1, h2, h3 {
     .dashboard-button {
         width: 100%;
     }
-
 }
-
