@@ -51,16 +51,21 @@ h1, h2, h3 {
     text-align: right;
 }
 
-.official-footer {
-    background-color: #191970; /* Midnight Blue */
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-    font-size: 0.75em;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
+<style>
+  .official-footer {
+    text-align: left;             /* چپ‌چین کردن متن */
+    padding: 15px 30px;           /* فاصله از کناره‌ها */
+    background-color: #f1f1f1;    /* رنگ زمینه روشن و رسمی */
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    border-top: 2px solid #ccc;   /* خط بالای فوتر */
+  }
+
+  .official-footer p {
+    margin: 4px 0;                /* فاصله بین خطوط */
+  }
+</style>
 
 /* Page Content and Forms */
 #main-content {
@@ -215,4 +220,5 @@ h1, h2, h3 {
     .dashboard-button {
         width: 100%;
     }
+
 }
