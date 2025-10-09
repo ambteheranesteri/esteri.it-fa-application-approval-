@@ -1,32 +1,12 @@
 [
   {
-    "username": "FARHAD",
-    "password": "12345",
-    "ceu": "ITA659349731",
-    "firstname": "FARHAD",
-    "lastname": "HAKIMI",
-    "nationality": "AFGHANISTAN",
-    "passport": "P1234567",
-    "caseNumber": "659349731",
-    "link1": "https://example.com/final-result.pdf",
-    "link2": "https://example.com/upload-passport",
-    "link3": "https://example.com/upload-photo",
-    "link4": "https://example.com/unhcr-confirmation",
-    "link5": ""
+    "USER_NAME": "mohammad",
+    "PASSWORD": "pass123",
+    "CEU_NUMBER": "1001"
   },
   {
-    "username": "AHMAD",
-    "password": "abcd123",
-    "ceu": "ITA202500111",
-    "firstname": "AHMAD",
-    "lastname": "NOORI",
-    "nationality": "AFGHANISTAN",
-    "passport": "P9876543",
-    "caseNumber": "202500111",
-    "link1": "https://example.com/result-ahmad.pdf",
-    "link2": "https://example.com/passport-ahmad",
-    "link3": "",
-    "link4": "",
-    "link5": "https://example.com/other-docs"
+    "USER_NAME": "fatemeh",
+    "PASSWORD": "mysecret",
+    "CEU_NUMBER": "2002"
   }
 ]
