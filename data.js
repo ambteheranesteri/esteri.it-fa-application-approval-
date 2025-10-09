@@ -11,18 +11,19 @@ const userData = [
         gender: "male"
     },
     {
-        username: "user2",
-        password: "pass2",
-        ceuNumber: "CEU67890",
-        name: "Sara",
-        lastname: "Karimi",
-        nationality: "Iran",
+        username: "MASHAL SAIDY",
+        password: "411914534",
+        ceuNumber: "CEU411914534",
+        name: "MASHAL",
+        lastname: "SAIDY",
+        nationality: "AFGHAN",
         passportNumber: "", // Optional
-        nationalIDNumber: "ID002",
+        nationalIDNumber: "00000",
         gender: "female"
     }
     // Add more data here
 ];
+
 
 
 
