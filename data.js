@@ -8,7 +8,7 @@ const userData = [
         nationality: "Afghan",
         passportNumber: "p909090",
         nationalIDNumber: "p909090",
-        gender: "female"
+        gender: "Female"
     },
     {
         username: "MASHAL SAIDY",
@@ -23,6 +23,7 @@ const userData = [
     }
     // Add more data here
 ];
+
 
 
 
