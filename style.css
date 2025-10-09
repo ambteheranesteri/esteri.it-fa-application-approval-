@@ -1,0 +1,218 @@
+/* General Styles and Reset */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f8ff; /* Alice Blue - Lightest background */
+    color: #333;
+    direction: ltr; /* Left-to-right text direction */
+    text-align: left;
+}
+
+h1, h2, h3 {
+    color: #000080; /* Navy Blue for emphasis */
+}
+
+/* Official Header and Footer */
+.official-header {
+    background-color: #191970; /* Midnight Blue - Dark official color */
+    color: white;
+    padding: 10px 20px;
+    border-bottom: 5px solid #87CEEB; /* Sky Blue accent line */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo-section .logo {
+    height: 50px; /* Logo size */
+    margin-right: 15px;
+}
+
+.title-section h1 {
+    color: white;
+    margin: 0;
+    font-size: 1.8em;
+}
+
+.title-section p {
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.contact-info p {
+    margin: 3px 0;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+.official-footer {
+    background-color: #191970; /* Midnight Blue */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 0.75em;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Page Content and Forms */
+#main-content {
+    min-height: calc(100vh - 120px);
+    padding: 20px 0;
+}
+
+.page-content {
+    max-width: 500px; 
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #4169E1; /* Royal Blue border */
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #000080; /* Navy Blue */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+.official-button {
+    background-color: #87CEEB; /* Sky Blue - Primary Action */
+    color: #000080; /* Navy Blue text for contrast */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.official-button:hover:not(:disabled) {
+    background-color: #4169E1; /* Royal Blue on hover */
+    color: white;
+}
+
+.official-button:disabled {
+    background-color: #e0e0e0;
+    color: #757575;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: #d32f2f;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Dashboard Styles */
+.dashboard-container h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.button-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; 
+}
+
+.dashboard-button {
+    width: 90%; 
+    padding: 15px;
+    background-color: #4169E1; /* Royal Blue for main actions */
+    color: white;
+}
+
+.dashboard-button:hover {
+    background-color: #000080; /* Navy Blue on hover */
+}
+
+/* Loading Animation */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#loading-gif {
+    width: 100px;
+    height: 100px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* **RESPONSIVENESS (Mobile-first design)** */
+@media (max-width: 600px) {
+    .official-header {
+        padding: 10px;
+    }
+
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .logo-section {
+        margin-bottom: 10px;
+    }
+
+    .title-section h1 {
+        font-size: 1.5em;
+    }
+
+    .contact-info {
+        display: none; 
+    }
+
+    .page-content {
+        margin: 10px;
+        padding: 20px;
+    }
+
+    .dashboard-button {
+        width: 100%;
+    }
+}
