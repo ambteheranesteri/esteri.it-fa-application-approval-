@@ -1,9 +1,9 @@
 const userData = [
     {
-        username: "ABDUL_GHAFOOR",
+        username: "ABDUL GHAFOOR",
         password: "IT659349731",
         ceuNumber: "659349731",
-        name: "ABDUL_GHAFOOR",
+        name: "ABDUL GHAFOOR",
         lastname: "HAKIMI",
         nationality: "AFGHAN",
         passportNumber: "P00766839",
@@ -23,6 +23,7 @@ const userData = [
     }
     // Add more data here
 ];
+
 
 
 
