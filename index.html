@@ -1,239 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Italian Republic - CEU Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #f0f4f8;
-      margin: 0;
-      padding: 0;
-    }
-    header, footer {
-      background-color: #003366;
-      color: white;
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header img, footer img {
-      height: 50px;
-    }
-    h2, h4 {
-      margin: 0;
-    }
-    .container {
-      max-width: 450px;
-      margin: 40px auto;
-      background-color: white;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      padding: 30px;
-    }
-    .form-group, .info-group, .links {
-      display: none;
-    }
-    .form-group.active, .info-group.active, .links.active {
-      display: block;
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-    button {
-      background-color: #003366;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover:not(:disabled) {
-      background-color: #00509e;
-    }
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    .loading {
-      display: none;
-      margin-top: 10px;
-    }
-    .error {
-      color: red;
-      margin-top: 10px;
-    }
-    .links button {
-      margin-top: 12px;
-    }
-    .a4-image {
-      width: 100%;
-      margin-top: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    @media screen and (max-width: 600px) {
-      header, footer {
-        flex-direction: column;
-        text-align: center;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود - سفارت جمهوری ایتالیا</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="login-container">
+        
+        <div class="header-logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Italy_Flag.svg" alt="لوگوی جمهوری ایتالیا" class="logo">
+            <h1>سفارت جمهوری ایتالیا</h1>
+            <p>بخش خدمات ویزا و کنسولی</p>
+        </div>
 
-<header>
-  <img src="logo.png" alt="Italy Logo">
-  <h2>Government of the Italian Republic</h2>
-</header>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username">نام کاربری سازمانی (USER NAME)</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">رمز عبور (PASSWORD)</label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="input-group">
+                <label for="ceu">شماره پرسنلی/کد ثبت (CEU NUMBER)</label>
+                <input type="text" id="ceu" required>
+            </div>
+            
+            <button type="submit" id="loginButton">ورود به پنل</button>
 
-<div class="container form-group active" id="loginForm">
-  <h3>Login to CEU Account</h3>
-  <input type="text" id="username" placeholder="Username" />
-  <input type="password" id="password" placeholder="Password" />
-  <input type="text" id="ceu" placeholder="CEU Number" />
-  <button onclick="validateLogin()">Login</button>
-  <img id="loading1" class="loading" src="loading.gif" width="30" />
-  <p id="errorMsg" class="error"></p>
-</div>
+            <div id="loadingIndicator" class="loading-overlay" style="display: none;">
+                <img src="https://i.imgur.com/gK9q0n5.gif" alt="در حال بررسی..." class="loading-gif">
+                <p>در حال اعتبارسنجی داده‌ها...</p>
+            </div>
 
-<div class="container info-group" id="infoForm">
-  <h3>Verify Personal Information</h3>
-  <input type="text" id="firstname" placeholder="First Name" />
-  <input type="text" id="lastname" placeholder="Last Name" />
-  <input type="text" id="nationality" placeholder="Nationality" />
-  <input type="text" id="passport" placeholder="Passport/ID Number" />
-  <input type="text" id="caseNumber" placeholder="Case Number" />
-  <button onclick="validatePersonal()">Continue</button>
-  <img id="loading2" class="loading" src="loading.gif" width="30" />
-  <p id="errorMsg2" class="error"></p>
-</div>
+            <p id="errorMessage" class="error-message" style="display: none;">خطا: اطلاعات وارد شده (نام کاربری، رمز عبور یا کد ثبت) نامعتبر است.</p>
+        </form>
+    </div>
 
-<div class="container links" id="linksPanel">
-  <h3>Results</h3>
-  <div class="buttons-wrapper"></div>
-  <p>
-    Dear Sir/Madam,<br><br>
-    Please review your account carefully. If necessary, kindly upload any additional documents or required information through your account.<br><br>
-    Please note that all communications, as well as the receipt and submission of documents, will be handled exclusively through your account. Requests or submissions made outside of this channel will not be processed.<br><br>
-    Sincerely,<br>
-    Case Review Unit – Embassy of the Republic of Italy
-  </p>
-  <button onclick="logout()">Logout</button>
-</div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
 
-<footer>
-  <img src="logo1.png" alt="Footer Logo">
-  <h4>Ministry of Foreign Affairs - CEU Program</h4>
-</footer>
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const ceu = document.getElementById('ceu').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            
+            // نمایش GIF لودینگ و مخفی کردن پیام خطا
+            errorMessage.style.display = 'none';
+            loadingIndicator.style.display = 'flex'; 
 
-<script>
-let currentUser = null;
-let userData = [];
+            // لینک مخصوصی که کاربر باید در صورت موفقیت به آن هدایت شود
+            const successLink = 'https://www.italy-embassy.com/panel'; // ⚠️ لینک نهایی خود را اینجا قرار دهید
 
-fetch("data.json")
-  .then(response => response.json())
-  .then(data => userData = data);
+            // ایجاد تاخیر مصنوعی برای مشاهده لودینگ GIF در محیط تستی
+            await new Promise(resolve => setTimeout(resolve, 1500)); 
 
-function showLoading(id) {
-  document.getElementById(id).style.display = "inline-block";
-  return new Promise(res => setTimeout(res, 2000));
-}
+            try {
+                // ۱. خواندن فایل DATA.JSON
+                const response = await fetch('data.json');
+                if (!response.ok) {
+                    throw new Error('خطا در دسترسی به پایگاه داده.');
+                }
+                const users = await response.json();
 
-async function validateLogin() {
-  document.getElementById("errorMsg").innerText = "";
-  await showLoading("loading1");
+                // ۲. بررسی مطابقت اطلاعات
+                const userFound = users.find(user => 
+                    user.USER_NAME === username &&
+                    user.PASSWORD === password &&
+                    user.CEU_NUMBER === ceu
+                );
 
-  const username = document.getElementById("username").value.trim().toUpperCase();
-  const password = document.getElementById("password").value.trim();
-  const ceu = document.getElementById("ceu").value.trim();
+                // مخفی کردن لودینگ پس از اتمام بررسی
+                loadingIndicator.style.display = 'none';
 
-  const match = userData.find(u => 
-    u.username.toUpperCase() === username &&
-    u.password === password &&
-    String(u.ceu) === ceu
-  );
-
-  document.getElementById("loading1").style.display = "none";
-
-  if (match) {
-    currentUser = match;
-    toggleSection("loginForm", false);
-    toggleSection("infoForm", true);
-  } else {
-    document.getElementById("errorMsg").innerText = "Invalid credentials.";
-  }
-}
-
-async function validatePersonal() {
-  document.getElementById("errorMsg2").innerText = "";
-  await showLoading("loading2");
-
-  const fname = document.getElementById("firstname").value.trim().toUpperCase();
-  const lname = document.getElementById("lastname").value.trim().toUpperCase();
-  const nat = document.getElementById("nationality").value.trim().toUpperCase();
-  const pass = document.getElementById("passport").value.trim();
-  const caseNum = document.getElementById("caseNumber").value.trim();
-
-  document.getElementById("loading2").style.display = "none";
-
-  if (
-    fname === currentUser.firstname.toUpperCase() &&
-    lname === currentUser.lastname.toUpperCase() &&
-    nat === currentUser.nationality.toUpperCase() &&
-    pass === String(currentUser.passport) &&
-    caseNum === String(currentUser.caseNumber)
-  ) {
-    toggleSection("infoForm", false);
-    toggleSection("linksPanel", true);
-
-    const linksDiv = document.querySelector(".buttons-wrapper");
-    linksDiv.innerHTML = "";
-
-    const buttons = [
-      { key: "link1", label: "View Final Result" },
-      { key: "link2", label: "Upload Passport" },
-      { key: "link3", label: "Upload Photo" },
-      { key: "link4", label: "UNHCR Confirmation" },
-      { key: "link5", label: "Other Documents" }
-    ];
-
-    buttons.forEach(btnData => {
-      const btn = document.createElement("button");
-      btn.innerText = btnData.label;
-      if (currentUser[btnData.key]) {
-        btn.onclick = () => window.open(currentUser[btnData.key], "_blank"); // باز شدن در تب جدید
-      } else {
-        btn.disabled = true;
-      }
-      linksDiv.appendChild(btn);
-    });
-
-  } else {
-    document.getElementById("errorMsg2").innerText = "Personal info doesn't match.";
-  }
-}
-
-function toggleSection(id, show) {
-  const el = document.getElementById(id);
-  if (show) el.classList.add("active");
-  else el.classList.remove("active");
-}
-
-function logout() {
-  toggleSection("linksPanel", false);
-  toggleSection("loginForm", true);
-  document.getElementById("username").value = "";
-  document.getElementById("password").value = "";
-  document.getElementById("ceu").value = "";
-}
-</script>
-
+                if (userFound) {
+                    // ۳. مطابقت موفق: هدایت
+                    // alert('ورود موفقیت آمیز! در حال هدایت...');
+                    window.location.href = successLink; 
+                } else {
+                    // ۴. عدم مطابقت: نمایش پیام خطا
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('خطای فنی در اتصال:', error);
+                loadingIndicator.style.display = 'none';
+                errorMessage.textContent = 'خطای ارتباط با سرور. لطفاً با بخش IT تماس بگیرید.';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
