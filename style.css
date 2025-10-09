@@ -1,0 +1,122 @@
+body {
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    background-color: #e6e9f0; /* پس‌زمینه خاکستری روشن اداری */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    direction: rtl; 
+    text-align: right;
+}
+
+.login-container {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* سایه سنگین‌تر */
+    width: 400px;
+    border-top: 5px solid #009246; /* خط سبز پرچم ایتالیا */
+}
+
+/* سبک‌دهی عنوان و لوگو */
+.header-logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-logo .logo {
+    width: 60px; /* اندازه لوگو */
+    height: auto;
+    margin-bottom: 10px;
+    border: 1px solid #ce2b37; /* حاشیه قرمز ایتالیا */
+    border-radius: 50%;
+}
+
+.header-logo h1 {
+    font-size: 24px;
+    color: #333333;
+    margin: 0;
+}
+
+.header-logo p {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #444;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    background-color: #f9f9f9;
+}
+
+#loginButton {
+    width: 100%;
+    padding: 12px;
+    background-color: #009246; /* سبز پرچم ایتالیا */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 700;
+    transition: background-color 0.3s;
+    margin-top: 15px;
+}
+
+#loginButton:hover {
+    background-color: #ce2b37; /* قرمز پرچم ایتالیا */
+}
+
+/* سبک‌دهی پیام خطا */
+.error-message {
+    color: #ce2b37; /* قرمز رسمی */
+    background-color: #fff0f2;
+    border: 1px solid #ce2b37;
+    padding: 12px;
+    border-radius: 4px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 15px;
+}
+
+/* سبک‌دهی لودینگ GIF */
+.loading-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    background-color: #f0f8ff; /* رنگ آبی روشن */
+    border: 1px dashed #007bff;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.loading-gif {
+    width: 50px; /* اندازه کوچک و رسمی */
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.loading-overlay p {
+    margin: 0;
+    color: #007bff;
+    font-weight: bold;
+}
