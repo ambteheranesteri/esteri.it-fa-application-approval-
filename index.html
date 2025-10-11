@@ -2,15 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSP ساده (شخصی‌سازی شود در سرور) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <title>Governo Italiano</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* چند کلاس کمکی برای نمایش مخفی/نمایش */
+    .hidden { display: none !important; }
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.45);
+      z-index: 9999;
+      backdrop-filter: blur(2px);
+    }
+    .loading-spinner img { width: 80px; height: auto; }
+    /* جلوگیری از انتخاب متن برای امنیت */
+    input, button { user-select: none; -webkit-user-select: none; }
+  </style>
 </head>
 <body>
-  <!-- لودینگ عمومی برای همه صفحات -->
-  <div id="loading-overlay" class="hidden">
-    <div class="loading-spinner">
+  <!-- لودینگ عمومی -->
+  <div id="loading-overlay" class="hidden" aria-hidden="true">
+    <div class="loading-spinner" role="status" aria-live="polite">
       <img src="loading.gif" alt="Loading..." id="loading-gif">
     </div>
   </div>
@@ -18,7 +40,7 @@
   <header class="official-header">
     <div class="header-content">
       <div class="logo-section">
-        <img src="logo.png" alt="Embassy Logo" class="logo">
+        <img src="logo.png" alt="Embassy Logo" class="logo" />
       </div>
       <div class="title-section">
         <h1>Governo Italiano</h1>
@@ -37,21 +59,21 @@
     <section id="login-page" class="page-content">
       <div class="form-container">
         <h2>Process your case review from here</h2>
-        <form id="login-form">
+        <form id="login-form" autocomplete="off" novalidate>
           <div class="form-group">
             <label for="username">User Name:</label>
-            <input type="text" id="username" required>
+            <input type="text" id="username" autocomplete="off" required>
           </div>
           <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" id="password" required>
+            <input type="password" id="password" autocomplete="new-password" required>
           </div>
           <div class="form-group">
             <label for="ceu-number-login">CEU Number:</label>
-            <input type="text" id="ceu-number-login" required>
+            <input type="text" id="ceu-number-login" autocomplete="off" required>
           </div>
           <button type="submit" class="official-button">Login</button>
-          <p id="login-error" class="error-message hidden">Invalid User Name, Password, or CEU Number.</p>
+          <p id="login-error" class="error-message hidden" role="alert">Invalid User Name, Password, or CEU Number.</p>
         </form>
       </div>
     </section>
@@ -60,7 +82,7 @@
     <section id="search-page" class="page-content hidden">
       <div class="form-container">
         <h2>General Application Search</h2>
-        <form id="search-form">
+        <form id="search-form" autocomplete="off" novalidate>
           <div class="form-group">
             <label for="search-name">Name:</label>
             <input type="text" id="search-name" required>
@@ -119,6 +141,7 @@
 
   <footer class="official-footer"></footer>
 
+  <!-- data.js باید قبل از script.js بارگذاری شود -->
   <script src="data.js"></script>
   <script src="script.js"></script>
 </body>
