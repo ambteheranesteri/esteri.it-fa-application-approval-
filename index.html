@@ -1,132 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <title>Governo Italiano</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>Governo Italiano</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="loading-overlay" class="hidden">
-        <div class="loading-spinner">
-            <img src="loading.gif" alt="Loading..." id="loading-gif">
-        </div>
+  <div id="loading-overlay" class="hidden">
+    <div class="loading-spinner">
+      <img src="loading.gif" alt="Loading..." id="loading-gif">
     </div>
+  </div>
 
-    <header class="official-header">
-        <div class="header-content">
-            <div class="logo-section">
-                <img src="logo.png" alt="Embassy Logo" class="logo">
-            </div>
-<div class="title-section">
-  <h1>Governo Italiano</h1>
-  <p>Ministry of Foreign Affairs and International Cooperation</p>
-</div>
-                            <div class="contact-info">
-                <p>68/79 Ave. Neuphle le Château – P.O. BOX 11365-7863</p>
-                <p>Tel: 00982166726955</p>
-                <p>E-mail: segreteria.teheran@esteri.it</p>
-            </div>
+  <header class="official-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="logo.png" alt="Embassy Logo" class="logo">
+      </div>
+      <div class="title-section">
+        <h1>Governo Italiano</h1>
+        <p>Ministry of Foreign Affairs and International Cooperation</p>
+      </div>
+      <div class="contact-info">
+        <p>68/79 Ave. Neuphle le Château – P.O. BOX 11365-7863</p>
+        <p>Tel: 00982166726955</p>
+        <p>E-mail: segreteria.teheran@esteri.it</p>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Login Page -->
+    <section id="login-page" class="page-content">
+      <div class="form-container">
+        <h2>Process your case review from here</h2>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="username">User Name:</label>
+            <input type="text" id="username" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+          </div>
+          <div class="form-group">
+            <label for="ceu-number-login">CEU Number:</label>
+            <input type="text" id="ceu-number-login" required>
+          </div>
+          <button type="submit" class="official-button">Login</button>
+          <p id="login-error" class="error-message hidden">Invalid User Name, Password, or CEU Number.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Search Page -->
+    <section id="search-page" class="page-content hidden">
+      <div class="form-container">
+        <h2>General Application Search</h2>
+        <form id="search-form">
+          <div class="form-group">
+            <label for="search-name">Name:</label>
+            <input type="text" id="search-name" required>
+          </div>
+          <div class="form-group">
+            <label for="search-lastname">Last Name:</label>
+            <input type="text" id="search-lastname" required>
+          </div>
+          <div class="form-group">
+            <label for="search-nationality">Nationality:</label>
+            <input type="text" id="search-nationality" required>
+          </div>
+          <div class="form-group">
+            <label for="search-passport">Passport Number (Optional):</label>
+            <input type="text" id="search-passport">
+          </div>
+          <div class="form-group">
+            <label for="search-national-id">National ID Number:</label>
+            <input type="text" id="search-national-id" required>
+          </div>
+          <div class="form-group">
+            <label for="search-ceu">CEU Number:</label>
+            <input type="text" id="search-ceu" required>
+          </div>
+          <div class="form-group">
+            <label for="search-gender">Gender:</label>
+            <select id="search-gender" required>
+              <option value="">Select</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+          <button type="submit" id="track-application-button" class="official-button" disabled>Track Application</button>
+          <p id="search-error" class="error-message hidden">Search data does not match any record.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Dashboard Page -->
+    <section id="dashboard-page" class="page-content hidden">
+      <div class="dashboard-container">
+        <h2>Application Dashboard</h2>
+        <div class="button-center">
+          <button id="final-result-btn" class="dashboard-button official-button">Final Result</button>
+          <button id="upload-passport-btn" class="dashboard-button official-button">Upload Passport</button>
+          <button id="upload-docs-btn" class="dashboard-button official-button">Upload Documents</button>
+          <button id="unhcr-letter-btn" class="dashboard-button official-button">View UNHCR REG Letter</button>
+          <button id="upload-finger-btn" class="dashboard-button official-button">Upload Finger Prints</button>
         </div>
-    </header>
+        <div style="text-align:center; margin-top:20px;">
+          <button id="logout-btn" class="official-button" style="background-color: crimson;">Logout</button>
+        </div>
+      </div>
+    </section>
+  </main>
 
-    <main id="main-content">
-        <section id="login-page" class="page-content">
-            <div class="form-container">
-                <h2>Process your case review from here</h2>
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="username">User Name:</label>
-                        <input type="text" id="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ceu-number-login">CEU Number:</label>
-                        <input type="text" id="ceu-number-login" required>
-                    </div>
-                    <button type="submit" class="official-button">Login</button>
-                    <p id="login-error" class="error-message hidden">Invalid User Name, Password, or CEU Number.</p>
-                </form>
-            </div>
-        </section>
+  <footer class="official-footer"></footer>
 
-        <section id="search-page" class="page-content hidden">
-            <div class="form-container">
-                <h2>General Application Search</h2>
-                <form id="search-form">
-                    <div class="form-group">
-                        <label for="search-name">Name:</label>
-                        <input type="text" id="search-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="search-lastname">Last Name:</label>
-                        <input type="text" id="search-lastname" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="search-nationality">Nationality:</label>
-                        <input type="text" id="search-nationality" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="search-passport">Passport Number (Optional):</label>
-                        <input type="text" id="search-passport">
-                    </div>
-                    <div class="form-group">
-                        <label for="search-national-id">National ID Number:</label>
-                        <input type="text" id="search-national-id" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="search-ceu">CEU Number:</label>
-                        <input type="text" id="search-ceu" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="search-gender">Gender:</label>
-                        <select id="search-gender" required>
-                            <option value="">Select</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                    </div>
-                    <button type="submit" id="track-application-button" class="official-button" disabled>Track Application</button>
-                    <p id="search-error" class="error-message hidden">Search data does not match any record.</p>
-                </form>
-            </div>
-        </section>
-
-        <section id="dashboard-page" class="page-content hidden">
-            <div class="dashboard-container">
-<h2>Application Dashboard</h2>
-<div class="button-center">
-    <button id="final-result-btn" class="dashboard-button official-button">Final Result</button>
-    <button class="dashboard-button official-button">Upload Passport</button>
-    <button class="dashboard-button official-button">Upload Documents</button>
-    <button class="dashboard-button official-button">View UNHCR REG Letter</button>
-    <button class="dashboard-button official-button">Upload Finger Prints</button>
-</div>
-            </div>
-        </section>
-    </main>
-
-<footer class="official-footer">
-
-            </div>
-</footer>
-
-    <script src="data.js"></script>
-    <script src="script.js"></script>
+  <script src="data.js"></script>
+  <script src="script.js"></script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
