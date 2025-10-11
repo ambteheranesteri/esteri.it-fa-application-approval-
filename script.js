@@ -18,8 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function showLoading() { loadingOverlay.classList.remove('hidden'); }
   function hideLoading() { loadingOverlay.classList.add('hidden'); }
 
-  let currentUser = sessionStorage.getItem('loggedInUser') ? JSON.parse(sessionStorage.getItem('loggedInUser')) : null;
-  if (currentUser) { showPage('search-page'); } else { showPage('login-page'); }
+  // اگر سیشن معتبر نباشد، کاربر باید دوباره لاگین کند
+  const savedUser = sessionStorage.getItem('loggedInUser');
+  if (savedUser) {
+    showPage('search-page');
+  } else {
+    showPage('login-page');
+  }
+
+  let currentUser = savedUser ? JSON.parse(savedUser) : null;
 
   // Login
   loginForm.addEventListener('submit', e => {
@@ -30,7 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const password = document.getElementById('password').value.trim();
     const ceuNumber = document.getElementById('ceu-number-login').value.trim();
 
-    const match = userData.find(u => u.username === username && u.password === password && u.ceuNumber === ceuNumber);
+    const match = userData.find(u =>
+      u.username === username &&
+      u.password === password &&
+      u.ceuNumber === ceuNumber
+    );
 
     showLoading();
     setTimeout(() => {
@@ -39,13 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser = match;
         sessionStorage.setItem('loggedInUser', JSON.stringify(match));
         showPage('search-page');
-      } else { loginError.classList.remove('hidden'); }
-    }, 1500);
+      } else {
+        loginError.classList.remove('hidden');
+      }
+    }, 2000);
   });
 
   // Search
   searchForm.addEventListener('input', () => {
-    const required = ['search-name','search-lastname','search-nationality','search-national-id','search-ceu','search-gender']
+    const required = ['search-name', 'search-lastname', 'search-nationality', 'search-national-id', 'search-ceu', 'search-gender']
       .map(id => document.getElementById(id).value.trim() !== "");
     trackButton.disabled = !required.every(Boolean);
   });
@@ -54,7 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     searchError.classList.add('hidden');
 
-    if (!currentUser) { showPage('login-page'); return; }
+    if (!currentUser) {
+      showPage('login-page');
+      return;
+    }
 
     const data = {
       name: document.getElementById('search-name').value.trim(),
@@ -82,11 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (match && match.username === currentUser.username) {
         showPage('dashboard-page');
         setupUserButtons(match);
-      } else { searchError.classList.remove('hidden'); }
-    }, 1500);
+      } else {
+        searchError.classList.remove('hidden');
+      }
+    }, 2000);
   });
 
-  // Setup dashboard buttons
+  // دکمه‌های اختصاصی
   function setupUserButtons(user) {
     const btns = {
       finalResult: document.getElementById('final-result-btn'),
@@ -95,41 +113,20 @@ document.addEventListener('DOMContentLoaded', () => {
       unhcrLetter: document.getElementById('unhcr-letter-btn'),
       uploadFinger: document.getElementById('upload-finger-btn'),
     };
-
     Object.keys(btns).forEach(k => {
       if (user.links && user.links[k]) {
-        if(k === "finalResult") {
-          btns[k].onclick = () => showPDF(user.links.finalResult);
-        } else {
-          btns[k].onclick = () => window.open(user.links[k], '_self');
-        }
-      } else { btns[k].disabled = true; }
-    });
-  }
-
-  // نمایش PDF در همان صفحه
-  function showPDF(url) {
-    dashboardPage.innerHTML = `
-      <h2 style="text-align:center;">Final Result</h2>
-      <div style="text-align:center; margin-top:20px;">
-        <iframe src="${url}" width="80%" height="600px" style="border:1px solid #ccc;"></iframe>
-      </div>
-      <div style="text-align:center; margin-top:20px;">
-        <button id="back-btn" class="official-button" style="background-color: crimson;">Back to Dashboard</button>
-      </div>
-    `;
-
-    document.getElementById('back-btn').addEventListener('click', () => {
-      showPage('dashboard-page');
-      setupUserButtons(JSON.parse(sessionStorage.getItem('loggedInUser')));
+        btns[k].onclick = () => window.open(user.links[k], '_self');
+      }
     });
   }
 
   // Logout
-  document.getElementById('logout-btn').addEventListener('click', () => {
-    sessionStorage.removeItem('loggedInUser');
-    currentUser = null;
-    showPage('login-page');
-  });
-
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('loggedInUser');
+      currentUser = null;
+      showPage('login-page');
+    });
+  }
 });
