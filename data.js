@@ -1,4 +1,3 @@
-// data.js
 const userData = [
   {
     username: "Mashal Saidy",
