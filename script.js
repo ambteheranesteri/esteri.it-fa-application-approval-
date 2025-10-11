@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginError = document.getElementById('login-error');
   const searchError = document.getElementById('search-error');
 
+  let currentUser = null;
+
   function showPage(pageId) {
     [loginPage, searchPage, dashboardPage].forEach(p => p.classList.add('hidden'));
     document.getElementById(pageId).classList.remove('hidden');
@@ -18,17 +20,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function showLoading() { loadingOverlay.classList.remove('hidden'); }
   function hideLoading() { loadingOverlay.classList.add('hidden'); }
 
-  // اگر سیشن معتبر نباشد، کاربر باید دوباره لاگین کند
+  function clearForms() {
+    document.querySelectorAll('form').forEach(f => f.reset());
+  }
+
+  // جلوگیری از بازگشت با back
+  history.pushState(null, null, location.href);
+  window.onpopstate = () => { history.go(1); };
+
+  // بررسی سیشن
   const savedUser = sessionStorage.getItem('loggedInUser');
   if (savedUser) {
+    currentUser = JSON.parse(savedUser);
     showPage('search-page');
   } else {
     showPage('login-page');
   }
 
-  let currentUser = savedUser ? JSON.parse(savedUser) : null;
-
-  // Login
+  // Login با ۳ فیلد
   loginForm.addEventListener('submit', e => {
     e.preventDefault();
     loginError.classList.add('hidden');
@@ -49,16 +58,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (match) {
         currentUser = match;
         sessionStorage.setItem('loggedInUser', JSON.stringify(match));
+        clearForms();
         showPage('search-page');
+        resetInactivityTimer();
       } else {
         loginError.classList.remove('hidden');
       }
     }, 2000);
   });
 
-  // Search
+  // Search form
   searchForm.addEventListener('input', () => {
-    const required = ['search-name', 'search-lastname', 'search-nationality', 'search-national-id', 'search-ceu', 'search-gender']
+    const required = ['search-name','search-lastname','search-nationality','search-national-id','search-ceu','search-gender']
       .map(id => document.getElementById(id).value.trim() !== "");
     trackButton.disabled = !required.every(Boolean);
   });
@@ -98,13 +109,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (match && match.username === currentUser.username) {
         showPage('dashboard-page');
         setupUserButtons(match);
+        resetInactivityTimer();
       } else {
         searchError.classList.remove('hidden');
       }
     }, 2000);
   });
 
-  // دکمه‌های اختصاصی
   function setupUserButtons(user) {
     const btns = {
       finalResult: document.getElementById('final-result-btn'),
@@ -124,9 +135,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      sessionStorage.removeItem('loggedInUser');
-      currentUser = null;
-      showPage('login-page');
+      showLoading();
+      setTimeout(() => {
+        sessionStorage.removeItem('loggedInUser');
+        currentUser = null;
+        clearForms();
+        hideLoading();
+        showPage('login-page');
+      }, 1000);
     });
   }
+
+  // Auto logout پس از 2 دقیقه inactivity
+  let inactivityTimer;
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => {
+      if(currentUser) {
+        alert('You have been logged out due to inactivity.');
+        logoutBtn.click();
+      }
+    }, 120000); // 120 ثانیه
+  }
+
+  // Reset timer on any action
+  ['click','mousemove','keydown','scroll'].forEach(evt => {
+    document.addEventListener(evt, resetInactivityTimer);
+  });
+
 });
