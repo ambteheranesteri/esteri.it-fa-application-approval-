@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function showLoading() { loadingOverlay.classList.remove('hidden'); }
   function hideLoading() { loadingOverlay.classList.add('hidden'); }
 
-  // اگر سیشن معتبر نباشد، کاربر باید دوباره لاگین کند
+  // بررسی سیشن
   const savedUser = sessionStorage.getItem('loggedInUser');
   if (savedUser) {
     showPage('search-page');
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2000);
   });
 
-  // دکمه‌های اختصاصی
+  // تنظیم لینک دکمه‌ها
   function setupUserButtons(user) {
     const btns = {
       finalResult: document.getElementById('final-result-btn'),
@@ -120,13 +120,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Logout
+  // Logout با نمایش loading
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      sessionStorage.removeItem('loggedInUser');
-      currentUser = null;
-      showPage('login-page');
+      showLoading(); // نمایش loading.gif
+      setTimeout(() => {
+        sessionStorage.removeItem('loggedInUser');
+        currentUser = null;
+        hideLoading();
+        showPage('login-page');
+      }, 2000); // تأخیر ۲ ثانیه‌ای
     });
   }
 });
