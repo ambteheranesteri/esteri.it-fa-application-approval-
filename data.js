@@ -10,7 +10,7 @@ const userData = [
     nationalIDNumber: "p909090",
     gender: "Female",
     links: {
-      finalResult: "https://example.com/mashal-final",
+      finalResult: "https://www.google.com",
       uploadPassport: "https://example.com/mashal-passport",
       uploadDocuments: "https://example.com/mashal-docs",
       unhcrLetter: "https://example.com/mashal-unhcr",
@@ -28,7 +28,7 @@ const userData = [
     nationalIDNumber: "00000",
     gender: "female",
     links: {
-      finalResult: "https://example.com/mashal2-final",
+      finalResult: "https://youtube.com",
       uploadPassport: "https://example.com/mashal2-passport",
       uploadDocuments: "https://example.com/mashal2-docs",
       unhcrLetter: "https://example.com/mashal2-unhcr",
@@ -36,3 +36,4 @@ const userData = [
     }
   }
 ];
+
