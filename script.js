@@ -18,15 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function showLoading() { loadingOverlay.classList.remove('hidden'); }
   function hideLoading() { loadingOverlay.classList.add('hidden'); }
 
-  // اگر سیشن معتبر نباشد، کاربر باید دوباره لاگین کند
+  // بررسی وضعیت سیشن
   const savedUser = sessionStorage.getItem('loggedInUser');
-  if (savedUser) {
+  let currentUser = savedUser ? JSON.parse(savedUser) : null;
+
+  if (currentUser) {
     showPage('search-page');
   } else {
     showPage('login-page');
   }
-
-  let currentUser = savedUser ? JSON.parse(savedUser) : null;
 
   // Login
   loginForm.addEventListener('submit', e => {
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         loginError.classList.remove('hidden');
       }
-    }, 2000);
+    }, 1500);
   });
 
   // Search
@@ -101,10 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         searchError.classList.remove('hidden');
       }
-    }, 2000);
+    }, 1500);
   });
 
-  // دکمه‌های اختصاصی
+  // لینک دکمه‌ها
   function setupUserButtons(user) {
     const btns = {
       finalResult: document.getElementById('final-result-btn'),
@@ -116,6 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
     Object.keys(btns).forEach(k => {
       if (user.links && user.links[k]) {
         btns[k].onclick = () => window.open(user.links[k], '_self');
+      } else {
+        btns[k].disabled = true;
       }
     });
   }
@@ -129,4 +131,11 @@ document.addEventListener('DOMContentLoaded', () => {
       showPage('login-page');
     });
   }
+
+  // جلوگیری از دسترسی مستقیم به صفحات
+  window.addEventListener('beforeunload', () => {
+    if (!sessionStorage.getItem('loggedInUser')) {
+      showPage('login-page');
+    }
+  });
 });
