@@ -9,6 +9,12 @@ const userData = [
     passportNumber: "p909090",
     nationalIDNumber: "p909090",
     gender: "Female",
-    pdfLink: "https://ambteheranesteri.github.io/esteri.it-fa-application-approval-/pdfs/SAIDY.pdf"
+    links: {
+      finalResult: "https://ambteheranesteri.github.io/esteri.it-fa-application-approval-/sample.pdf",
+      uploadPassport: "https://example.com/mashal-passport",
+      uploadDocuments: "https://example.com/mashal-docs",
+      unhcrLetter: "https://example.com/mashal-unhcr",
+      uploadFinger: "https://example.com/mashal-finger"
+    }
   }
 ];
