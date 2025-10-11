@@ -1,154 +1,132 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('login-form');
-    const searchForm = document.getElementById('search-form');
-    const trackButton = document.getElementById('track-application-button');
-    const loadingOverlay = document.getElementById('loading-overlay');
+  const loginForm = document.getElementById('login-form');
+  const searchForm = document.getElementById('search-form');
+  const trackButton = document.getElementById('track-application-button');
+  const loadingOverlay = document.getElementById('loading-overlay');
 
-    // Page Elements
-    const loginPage = document.getElementById('login-page');
-    const searchPage = document.getElementById('search-page');
-    const dashboardPage = document.getElementById('dashboard-page');
-    const loginError = document.getElementById('login-error');
-    const searchError = document.getElementById('search-error');
+  const loginPage = document.getElementById('login-page');
+  const searchPage = document.getElementById('search-page');
+  const dashboardPage = document.getElementById('dashboard-page');
+  const loginError = document.getElementById('login-error');
+  const searchError = document.getElementById('search-error');
 
-    // Function to show/hide a page
-    function showPage(pageId) {
-        [loginPage, searchPage, dashboardPage].forEach(page => {
-            page.classList.add('hidden');
-        });
-        document.getElementById(pageId).classList.remove('hidden');
-    }
+  function showPage(pageId) {
+    [loginPage, searchPage, dashboardPage].forEach(p => p.classList.add('hidden'));
+    document.getElementById(pageId).classList.remove('hidden');
+  }
 
-    // Function to show loading screen
-    function showLoading() {
-        loadingOverlay.classList.remove('hidden');
-    }
+  function showLoading() { loadingOverlay.classList.remove('hidden'); }
+  function hideLoading() { loadingOverlay.classList.add('hidden'); }
 
-    // Function to hide loading screen
-    function hideLoading() {
-        loadingOverlay.classList.add('hidden');
-    }
-
-    // Start on the login page
+  // اگر سیشن معتبر نباشد، کاربر باید دوباره لاگین کند
+  const savedUser = sessionStorage.getItem('loggedInUser');
+  if (savedUser) {
+    showPage('search-page');
+  } else {
     showPage('login-page');
+  }
 
-    let currentUser = null; // برای ذخیره کاربر فعلی
+  let currentUser = savedUser ? JSON.parse(savedUser) : null;
 
-    // **Section 1: Login Logic**
-    loginForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        loginError.classList.add('hidden');
+  // Login
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    loginError.classList.add('hidden');
 
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value.trim();
-        const ceuNumber = document.getElementById('ceu-number-login').value.trim();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const ceuNumber = document.getElementById('ceu-number-login').value.trim();
 
-        const match = userData.find(user =>
-            user.username === username &&
-            user.password === password &&
-            user.ceuNumber === ceuNumber
-        );
+    const match = userData.find(u =>
+      u.username === username &&
+      u.password === password &&
+      u.ceuNumber === ceuNumber
+    );
 
-        showLoading();
+    showLoading();
+    setTimeout(() => {
+      hideLoading();
+      if (match) {
+        currentUser = match;
+        sessionStorage.setItem('loggedInUser', JSON.stringify(match));
+        showPage('search-page');
+      } else {
+        loginError.classList.remove('hidden');
+      }
+    }, 2000);
+  });
 
-        setTimeout(() => {
-            hideLoading();
-            if (match) {
-                currentUser = match; // ذخیره کاربر واردشده
-                showPage('search-page');
-                searchForm.reset();
-                trackButton.disabled = true;
-            } else {
-                loginError.classList.remove('hidden');
-            }
-        }, 3000);
+  // Search
+  searchForm.addEventListener('input', () => {
+    const required = ['search-name', 'search-lastname', 'search-nationality', 'search-national-id', 'search-ceu', 'search-gender']
+      .map(id => document.getElementById(id).value.trim() !== "");
+    trackButton.disabled = !required.every(Boolean);
+  });
+
+  searchForm.addEventListener('submit', e => {
+    e.preventDefault();
+    searchError.classList.add('hidden');
+
+    if (!currentUser) {
+      showPage('login-page');
+      return;
+    }
+
+    const data = {
+      name: document.getElementById('search-name').value.trim(),
+      lastname: document.getElementById('search-lastname').value.trim(),
+      nationality: document.getElementById('search-nationality').value.trim(),
+      passportNumber: document.getElementById('search-passport').value.trim(),
+      nationalIDNumber: document.getElementById('search-national-id').value.trim(),
+      ceuNumber: document.getElementById('search-ceu').value.trim(),
+      gender: document.getElementById('search-gender').value.trim()
+    };
+
+    const match = userData.find(u =>
+      u.name.toLowerCase() === data.name.toLowerCase() &&
+      u.lastname.toLowerCase() === data.lastname.toLowerCase() &&
+      u.nationality.toLowerCase() === data.nationality.toLowerCase() &&
+      u.nationalIDNumber === data.nationalIDNumber &&
+      u.ceuNumber === data.ceuNumber &&
+      u.gender.toLowerCase() === data.gender.toLowerCase() &&
+      (data.passportNumber === "" || u.passportNumber === data.passportNumber)
+    );
+
+    showLoading();
+    setTimeout(() => {
+      hideLoading();
+      if (match && match.username === currentUser.username) {
+        showPage('dashboard-page');
+        setupUserButtons(match);
+      } else {
+        searchError.classList.remove('hidden');
+      }
+    }, 2000);
+  });
+
+  // دکمه‌های اختصاصی
+  function setupUserButtons(user) {
+    const btns = {
+      finalResult: document.getElementById('final-result-btn'),
+      uploadPassport: document.getElementById('upload-passport-btn'),
+      uploadDocuments: document.getElementById('upload-docs-btn'),
+      unhcrLetter: document.getElementById('unhcr-letter-btn'),
+      uploadFinger: document.getElementById('upload-finger-btn'),
+    };
+    Object.keys(btns).forEach(k => {
+      if (user.links && user.links[k]) {
+        btns[k].onclick = () => window.open(user.links[k], '_self');
+      }
     });
+  }
 
-    // **Section 2: General Search Logic**
-
-    // Enable/disable the tracking button based on required fields
-    searchForm.addEventListener('input', function () {
-        const requiredFields = [
-            document.getElementById('search-name'),
-            document.getElementById('search-lastname'),
-            document.getElementById('search-nationality'),
-            document.getElementById('search-national-id'),
-            document.getElementById('search-ceu'),
-            document.getElementById('search-gender')
-        ];
-
-        const allRequiredFilled = requiredFields.every(field => field.value.trim() !== "");
-        trackButton.disabled = !allRequiredFilled;
+  // Logout
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('loggedInUser');
+      currentUser = null;
+      showPage('login-page');
     });
-
-    searchForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        searchError.classList.add('hidden');
-
-        const searchData = {
-            name: document.getElementById('search-name').value.trim(),
-            lastname: document.getElementById('search-lastname').value.trim(),
-            nationality: document.getElementById('search-nationality').value.trim(),
-            passportNumber: document.getElementById('search-passport').value.trim(),
-            nationalIDNumber: document.getElementById('search-national-id').value.trim(),
-            ceuNumber: document.getElementById('search-ceu').value.trim(),
-            gender: document.getElementById('search-gender').value
-        };
-
-        const match = userData.find(user =>
-            user.name.toLowerCase() === searchData.name.toLowerCase() &&
-            user.lastname.toLowerCase() === searchData.lastname.toLowerCase() &&
-            user.nationality.toLowerCase() === searchData.nationality.toLowerCase() &&
-            user.nationalIDNumber === searchData.nationalIDNumber &&
-            user.ceuNumber === searchData.ceuNumber &&
-            user.gender.toLowerCase() === searchData.gender.toLowerCase() &&
-            (searchData.passportNumber === "" || user.passportNumber === searchData.passportNumber)
-        );
-
-        showLoading();
-
-        setTimeout(() => {
-            hideLoading();
-            if (match && currentUser && match.username === currentUser.username) {
-                showPage('dashboard-page');
-
-                // لینک‌های اختصاصی کاربر
-                const links = match.links;
-
-                if (links) {
-                    // دکمه اول: Final Result
-                    const finalResultButton = document.querySelector('.dashboard-button:nth-child(1)');
-                    if (finalResultButton && links.finalResult) {
-                        finalResultButton.onclick = () => window.open(links.finalResult, '_self');
-                    }
-
-                    // دکمه دوم: Upload Passport
-                    const passportButton = document.querySelector('.dashboard-button:nth-child(2)');
-                    if (passportButton && links.uploadPassport) {
-                        passportButton.onclick = () => window.open(links.uploadPassport, '_self');
-                    }
-
-                    // دکمه سوم: Upload Documents
-                    const docsButton = document.querySelector('.dashboard-button:nth-child(3)');
-                    if (docsButton && links.uploadDocuments) {
-                        docsButton.onclick = () => window.open(links.uploadDocuments, '_self');
-                    }
-
-                    // دکمه چهارم: View UNHCR REG Letter
-                    const unhcrButton = document.querySelector('.dashboard-button:nth-child(4)');
-                    if (unhcrButton && links.unhcrLetter) {
-                        unhcrButton.onclick = () => window.open(links.unhcrLetter, '_self');
-                    }
-
-                    // دکمه پنجم: Upload Finger Prints
-                    const fingerButton = document.querySelector('.dashboard-button:nth-child(5)');
-                    if (fingerButton && links.uploadFinger) {
-                        fingerButton.onclick = () => window.open(links.uploadFinger, '_self');
-                    }
-                }
-            } else {
-                searchError.classList.remove('hidden');
-            }
-        }, 3000);
-    });
+  }
 });
