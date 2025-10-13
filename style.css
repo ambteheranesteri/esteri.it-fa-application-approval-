@@ -1,96 +1,180 @@
-/* General Styles and Reset */
+/* متغیرهای رنگ رسمی */
+:root {
+    --main-blue: #00479A; /* Deep Official Blue (رنگ اصلی ایتالیا) */
+    --light-blue: #0056b3;
+    --secondary-color: #6c757d; /* Grey */
+    --danger-color: #CC0000; /* Official Red for alerts/logout */
+    --success-color: #28a745; /* Green */
+    --border-radius: 6px;
+}
+
+/* Base Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
     margin: 0;
     padding: 0;
-    background-color: #f0f8ff;
     color: #333;
-    direction: ltr;
-    text-align: left;
 }
 
-h1, h2, h3 {
-    color: #000080;
-}
-
-/* Official Header and Footer */
+/* Official Header */
 .official-header {
-    background-color: #191970;
+    background-color: var(--main-blue);
     color: white;
-    padding: 10px 20px;
-    border-bottom: 5px solid #87CEEB;
+    padding: 15px 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
 }
 
-.logo-section .logo {
-    height: 50px;
+.logo {
+    height: 60px;
     margin-right: 15px;
 }
 
-/* Centered Title Section */
-.title-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
 .title-section h1 {
-    color: white;
     margin: 0;
     font-size: 1.8em;
+    font-weight: 600;
 }
 
 .title-section p {
     margin: 0;
     font-size: 0.9em;
+    opacity: 0.9;
 }
 
-.contact-info p {
-    margin: 3px 0;
+.contact-info {
     font-size: 0.8em;
     text-align: right;
+    opacity: 0.9;
 }
 
-.official-footer {
-    background-color: #191970;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-    font-size: 0.75em;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
-
-/* Page Content and Forms */
-#main-content {
+/* Main Dashboard Layout */
+#dashboard-layout {
+    display: flex;
     min-height: calc(100vh - 120px);
-    padding: 20px 0;
+    max-width: 1300px;
+    margin: 20px auto;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    background-color: white;
 }
 
-.page-content {
-    max-width: 500px; 
-    margin: 20px auto;
+/* Sidebar Styles */
+.sidebar {
+    width: 300px;
+    background-color: #ffffff; /* White background for clean look */
+    padding: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    overflow-y: auto;
+    border-right: 1px solid #eee;
+}
+
+.applicant-info {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--main-blue); /* خط آبی رسمی */
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+}
+
+.applicant-info h3 {
+    margin: 10px 0 5px;
+    font-size: 1.1em;
+}
+
+.applicant-info p {
+    margin: 0;
+    font-size: 0.8em;
+    color: var(--secondary-color);
+}
+
+.menu-section-title {
+    color: var(--main-blue);
+    font-size: 0.8em;
+    font-weight: 700;
+    padding: 10px 20px;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-button {
+    width: 100%;
+    padding: 12px 20px;
+    text-align: left;
+    border: none;
+    background: none;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-left 0.2s;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+}
+
+.dashboard-button i {
+    width: 20px;
+    text-align: center;
+}
+
+.dashboard-button:hover:not(:disabled) {
+    background-color: #e9ecef;
+}
+
+.dashboard-button.active {
+    background-color: var(--main-blue);
+    color: white;
+    border-left: 3px solid var(--success-color); /* یا رنگ متضاد دیگر برای فعال بودن */
+}
+
+.dashboard-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: #777;
+    background-color: #f1f1f1;
+}
+
+/* Content Area */
+.dashboard-content {
+    flex-grow: 1;
     padding: 30px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-top: 5px solid #4169E1;
+    background-color: white;
+}
+
+/* Login Page Styles */
+#login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.form-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 30px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 .form-container h2 {
     text-align: center;
-    margin-bottom: 25px;
-    color: #000080;
+    color: var(--main-blue);
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
 }
 
 .form-group {
@@ -100,128 +184,108 @@ h1, h2, h3 {
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
+    font-weight: 600;
 }
 
-.form-group input, .form-group select {
+.form-group input {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     box-sizing: border-box;
     font-size: 1em;
 }
 
+/* General Buttons */
 .official-button {
-    background-color: #87CEEB;
-    color: #000080;
-    padding: 10px 20px;
+    background-color: var(--main-blue);
+    color: white;
+    padding: 10px 15px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     cursor: pointer;
-    font-size: 1em;
     transition: background-color 0.3s;
-    display: block;
+    font-weight: 600;
     width: 100%;
-    margin-top: 20px;
-    font-weight: bold;
-}
-
-.official-button:hover:not(:disabled) {
-    background-color: #4169E1;
-    color: white;
-}
-
-.official-button:disabled {
-    background-color: #e0e0e0;
-    color: #757575;
-    cursor: not-allowed;
-}
-
-.error-message {
-    color: #d32f2f;
-    font-weight: bold;
     margin-top: 10px;
+}
+
+.official-button:hover {
+    background-color: var(--light-blue);
+}
+
+.logout-button {
+    background-color: var(--danger-color) !important;
+}
+
+.logout-button:hover {
+    background-color: #a00000 !important;
+}
+
+/* Error and Alert Messages */
+.error-message {
+    color: var(--danger-color);
     text-align: center;
+    margin-top: 15px;
+    font-weight: 600;
 }
 
-/* Dashboard Styles */
-.dashboard-container h2 {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.button-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px; 
-}
-
-.dashboard-button {
-    width: 90%; 
+.alert-box {
     padding: 15px;
-    background-color: #4169E1;
-    color: white;
+    border-radius: var(--border-radius);
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
 }
 
-.dashboard-button:hover {
-    background-color: #000080;
+.alert-box.primary {
+    background-color: #e7f3ff;
+    border: 1px solid var(--main-blue);
+    color: #000;
 }
 
-/* Loading Animation */
+.alert-box.primary strong {
+    color: var(--danger-color);
+}
+
+.alert-box i {
+    font-size: 1.5em;
+    color: var(--main-blue);
+}
+
+/* Utility Class */
+.hidden {
+    display: none !important;
+}
+
+/* Loading Animation (Overlay) */
 #loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.9); /* پس‌زمینه نیمه‌شفاف */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
-#loading-gif {
-    width: 100px;
-    height: 100px;
+.loading-spinner img {
+    /* فرض کنید loading.gif یک انیمیشن با ابعاد مناسب است */
+    width: 80px; 
+    height: 80px;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
-.hidden {
-    display: none !important;
-}
-
-/* Responsiveness */
-@media (max-width: 600px) {
-    .official-header {
-        padding: 10px;
-    }
-
-    .header-content {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .logo-section {
-        margin-bottom: 10px;
-    }
-
-    .title-section h1 {
-        font-size: 1.5em;
-    }
-
-    .contact-info {
-        display: none;
-    }
-
-    .page-content {
-        margin: 10px;
-        padding: 20px;
-    }
-
-    .dashboard-button {
-        width: 100%;
-    }
+/* Footer */
+.official-footer {
+    background-color: #333;
+    color: #ccc;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8em;
 }
