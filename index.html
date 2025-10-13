@@ -108,8 +108,17 @@
         </section>
     </main>
 
-    <footer class="official-footer">
-        <p>&copy; 2025 Embassy of Italy in Tehran. All Rights Reserved. | Disclaimer</p>
+   <footer class="official-footer">
+        <div class="footer-content">
+            <div id="progress-container" class="progress-container hidden">
+                <p>Application Completion Status: <span id="progress-percentage">0%</span> Complete</p>
+                <div class="progress-bar-shell">
+                    <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%;"></div>
+                </div>
+                <p id="progress-message">Please log in to check your status.</p>
+            </div>
+            <p>&copy; 2025 Embassy of Italy in Tehran. All Rights Reserved. | Disclaimer</p>
+        </div>
     </footer>
 
     <script src="script.js"></script>
