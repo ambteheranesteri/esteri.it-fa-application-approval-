@@ -34,8 +34,8 @@ body {
 }
 
 .logo {
-    height: 60px;
-    margin-right: 15px;
+  width: 180px;
+  height: auto;
 }
 
 .title-section h1 {
@@ -289,3 +289,4 @@ body {
     padding: 10px;
     font-size: 0.8em;
 }
+
