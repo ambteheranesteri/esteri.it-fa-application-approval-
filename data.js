@@ -50,6 +50,7 @@ const userData = [
       finalResult: "https://ambteheranesteri.github.io/approval-result-view/ITTEH-2025-5601612473-appointment.pdf",
       uploadPassport: "https://example.com/mashal2-passport",
       uploadDocuments: "https://example.com/mashal2-docs",
+      AppointmentResult: "https://ambteheranesteri.github.io/approval-result-view/ITTEH-2025-5601612473-appointment.pdf",
       unhcrLetter: "https://example.com/mashal2-unhcr",
       uploadFinger: "https://example.com/mashal2-finger"
     }
@@ -73,4 +74,5 @@ const userData = [
     }
   }
 ];
+
 
