@@ -33,7 +33,7 @@
         </div>
     </header>
 
-    <main id="main-content">
+<main id="main-content">
         <section id="login-page" class="page-content">
             <div class="form-container">
                 <h2>Secure Applicant Login</h2>
@@ -53,7 +53,7 @@
                     <button type="submit" class="official-button">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
-                    <p id="login-error" class="error-message hidden">Invalid Credentials. Please check User Name, Password, and CEU Number.</p>
+                    <p id="login-error" class="error-message hidden">Invalid Credentials. Please check User Name, Password, or CEU Number.</p>
                 </form>
             </div>
         </section>
@@ -62,9 +62,9 @@
             
             <aside class="sidebar">
                 <div class="applicant-info">
-                    <i class="fas fa-user-circle fa-3x" style="color: var(--main-blue);"></i>
-                    <h3>SAYED JAMSHID HUSSAINI</h3>
-                    <p>Case ID: ITTEH/2025/5601612473</p>
+                    <i class="fas fa-user-circle fa-3x" id="info-icon" style="color: var(--main-blue);"></i>
+                    <h3 id="applicant-name">Loading...</h3>
+                    <p id="applicant-case-id">Case ID: Loading...</p>
                 </div>
                 
                 <div class="menu-section-title">Application Submission</div>
@@ -103,11 +103,7 @@
                 <p>This secure portal allows you to manage your application, upload required documentation, track your status, and view your final interview result. Please ensure all documents are uploaded by the specified deadlines.</p>
                 
                 <div id="content-placeholder">
-                    <div class="alert-box primary">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <p><strong>URGENT ACTION REQUIRED:</strong> Please ensure the payment of $\text{EUR 230}$ is completed through international banking channels and the receipt is uploaded via the **Payment Fee Confirmation** button before **20 October 2025**.</p>
                     </div>
-                </div>
             </section>
         </section>
     </main>
@@ -119,3 +115,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
