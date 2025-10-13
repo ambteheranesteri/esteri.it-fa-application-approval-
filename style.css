@@ -23,7 +23,8 @@ body {
 .official-header {
     background-color: var(--main-blue);
     color: white;
-    padding: 10px 20px;
+    /* کاهش پدینگ عمودی از 15px به 10px برای کاهش ارتفاع هدر */
+    padding: 10px 20px; 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -36,7 +37,8 @@ body {
 }
 
 .logo {
-    width: 120px;
+    /* کاهش عرض لگو از 180px به 120px */
+    width: 120px; 
     height: auto;
 }
 
@@ -57,7 +59,6 @@ body {
     text-align: right;
     opacity: 0.9;
 }
-
 /* Main Dashboard Layout */
 #dashboard-layout {
     display: flex;
@@ -512,5 +513,6 @@ body {
         font-size: 0.8em;
     }
 }
+
 
 
