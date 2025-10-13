@@ -6,6 +6,8 @@
     --danger-color: #CC0000; /* Official Red for alerts/logout */
     --success-color: #28a745; /* Green */
     --border-radius: 6px;
+    /* متغیر جدید برای پدینگ موبایل */
+    --mobile-padding: 15px; 
 }
 
 /* Base Styles */
@@ -34,8 +36,8 @@ body {
 }
 
 .logo {
-  width: 180px;
-  height: auto;
+    width: 180px;
+    height: auto;
 }
 
 .title-section h1 {
@@ -281,8 +283,6 @@ body {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
-/* ... (تمام استایل‌های قبلی) ... */
-
 /* Footer Styles Update */
 .official-footer {
     background-color: #333;
@@ -340,3 +340,175 @@ body {
     margin-top: 5px !important;
 }
 
+/* ------------------------------------------------------------------ */
+/* Media Queries for Responsiveness (موبایل و دسکتاپ) */
+/* ------------------------------------------------------------------ */
+
+/* تنظیمات موبایل (صفحه نمایش کوچک، پیش‌فرض) */
+
+/* هدر */
+.official-header {
+    padding: 15px var(--mobile-padding); /* پدینگ کمتر برای موبایل */
+}
+
+.header-content {
+    flex-wrap: wrap; /* اجازه شکست خط در موبایل */
+}
+
+.logo {
+    width: 150px; /* کاهش سایز لوگو */
+}
+
+.title-section h1 {
+    font-size: 1.4em; /* کاهش اندازه عنوان */
+}
+
+.contact-info {
+    font-size: 0.7em;
+    width: 100%; /* اشغال خط کامل */
+    text-align: left;
+    order: 3; /* انتقال به پایین در موبایل */
+    margin-top: 10px;
+}
+
+/* داشبورد */
+#dashboard-layout {
+    flex-direction: column; /* حالت ستونی: سایدبار در بالا، محتوا در پایین */
+    max-width: 100%; /* عرض کامل */
+    margin: 0; 
+    box-shadow: none; 
+}
+
+/* سایدبار در موبایل */
+.sidebar {
+    width: 100%; /* عرض کامل */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border-right: none;
+    border-bottom: 1px solid #eee; /* خط تفکیک */
+    max-height: 350px; /* برای جلوگیری از اشغال تمام صفحه */
+}
+
+.applicant-info {
+    padding: 15px;
+}
+
+.applicant-info h3 {
+    font-size: 1em;
+}
+
+.menu-section-title {
+    padding: 10px var(--mobile-padding);
+}
+
+.dashboard-button {
+    padding: 10px var(--mobile-padding); /* پدینگ کمتر */
+    font-size: 0.9em;
+}
+
+/* محتوا */
+.dashboard-content {
+    padding: var(--mobile-padding); /* پدینگ کمتر */
+}
+
+/* فوتر و نوار پیشرفت در موبایل */
+.footer-content {
+    padding: 0 var(--mobile-padding);
+}
+
+.progress-container {
+    padding: 8px var(--mobile-padding);
+}
+
+.progress-container p {
+    font-size: 0.75em;
+}
+
+.progress-bar-shell {
+    height: 8px; /* ارتفاع کمتر */
+}
+
+#progress-message {
+    font-size: 0.7em;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Media Query برای دسکتاپ (صفحات بزرگتر از 768px) */
+@media (min-width: 768px) {
+    
+    /* هدر */
+    .official-header {
+        padding: 15px 30px;
+    }
+
+    .logo {
+        width: 180px;
+    }
+
+    .title-section h1 {
+        font-size: 1.8em;
+    }
+
+    .contact-info {
+        font-size: 0.8em;
+        width: auto;
+        text-align: right;
+        order: initial;
+        margin-top: 0;
+    }
+
+    /* داشبورد */
+    #dashboard-layout {
+        flex-direction: row; /* حالت دسکتاپ: سایدبار و محتوا کنار هم */
+        max-width: 1300px;
+        margin: 20px auto;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        border-radius: var(--border-radius);
+    }
+
+    /* سایدبار در دسکتاپ */
+    .sidebar {
+        width: 300px; /* عرض ثابت */
+        border-right: 1px solid #eee;
+        border-bottom: none;
+        max-height: none;
+    }
+
+    .applicant-info {
+        padding: 20px;
+    }
+
+    .menu-section-title {
+        padding: 10px 20px;
+    }
+
+    .dashboard-button {
+        padding: 12px 20px;
+    }
+
+    /* محتوا */
+    .dashboard-content {
+        padding: 30px;
+    }
+
+    /* فوتر و نوار پیشرفت در دسکتاپ */
+    .footer-content {
+        padding: 0 20px;
+    }
+
+    .progress-container {
+        padding: 10px 20px;
+    }
+
+    .progress-container p {
+        font-size: 0.8em;
+    }
+
+    .progress-bar-shell {
+        height: 10px;
+    }
+
+    #progress-message {
+        font-size: 0.8em;
+    }
+}
