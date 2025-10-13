@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- داده‌های کاربری ---
+    // --- User Data ---
     const userData = [
         {
             username: "BIBI SAYEDA",
@@ -80,10 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
     
-    // --- متغیر سراسری برای نگهداری اطلاعات کاربر فعلی ---
+    // --- Global variable to hold current user data ---
     let currentUser = null; 
 
-    // --- تعریف متغیرهای DOM اصلی ---
+    // --- Define main DOM variables ---
     const loginForm = document.getElementById('login-form');
     const logoutBtn = document.getElementById('logout-btn');
     const loadingOverlay = document.getElementById('loading-overlay');
@@ -97,19 +97,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const applicantCaseId = document.getElementById('applicant-case-id');
     const infoIcon = document.getElementById('info-icon');
     
-    // --- متغیرهای جدید DOM برای نوار پیشرفت (از فوتر) ---
+    // --- New DOM variables for progress bar (from footer) ---
     const progressContainer = document.getElementById('progress-container');
     const progressBarFill = document.getElementById('progress-bar-fill');
     const progressPercentage = document.getElementById('progress-percentage');
     const progressMessage = document.getElementById('progress-message');
+    
+    // --- New DOM variables for Signup/Login toggle ---
+    const signupMessageBox = document.getElementById('signup-message-box');
+    const signupBtn = document.getElementById('signup-btn');
+    const backToLoginBtn = document.getElementById('back-to-login-btn');
 
 
-    // === تابع به‌روزرسانی اطلاعات سایدبار ===
+    // === Sidebar Info Update Function ===
     function updateSidebarInfo() {
         if (currentUser) {
             applicantName.textContent = `${currentUser.name} ${currentUser.lastname}`;
             applicantCaseId.textContent = `Case ID: ${currentUser.ceuNumber}`;
-            // تغییر آیکون بر اساس جنسیت (اختیاری)
+            // Change icon based on gender (optional)
             if (currentUser.gender && currentUser.gender.toLowerCase() === 'female') {
                 infoIcon.classList.remove('fa-user-circle');
                 infoIcon.classList.add('fa-user-alt');
@@ -121,26 +126,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // ------------------------------------------------------------------
-    // === منطق جدید: محاسبه درصد تکمیل مدارک برای نوار پیشرفت ===
+    // === New Logic: Calculate Document Completion Percentage for Progress Bar ===
     // ------------------------------------------------------------------
     function calculateProgress(user) {
         if (!user || !user.links) return 0;
 
-        // دکمه‌هایی که معادل آپلود یک مدرک مهم هستند
+        // Buttons corresponding to important document uploads
         const requiredUploads = [
             'uploadPassport', 
-            'uploadDocuments', // اسناد هویتی
+            'uploadDocuments', // Identity documents
             'unhcrLetter', 
             'uploadFinger',
-            'AppointmentResult', // اگر لینک نتیجه نوبت‌دهی موجود باشد، یک مرحله مهم طی شده است.
-            // توجه: uploadPhoto، uploadIdentity، uploadDanger، uploadResidence و finalResult نیز می‌توانند به این لیست اضافه شوند.
+            'AppointmentResult', // If the appointment result link exists, an important step is completed.
+            // Note: uploadPhoto, uploadIdentity, uploadDanger, uploadResidence and finalResult can also be added to this list.
         ];
         
         const totalSteps = requiredUploads.length;
         let completedSteps = 0;
 
         requiredUploads.forEach(key => {
-            // فرض: اگر لینک مربوط به مدرک وجود داشته باشد و مقدار آن یک URL معتبر باشد (شامل http باشد)، یعنی آپلود شده/موجود است.
+            // Assumption: If the document link exists and its value is a valid URL (contains 'http'), it's considered uploaded/present.
             if (user.links[key] && user.links[key].includes('http')) {
                 completedSteps++;
             }
@@ -150,11 +155,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return percentage;
     }
 
-    // === منطق جدید: تابع به‌روزرسانی نوار پیشرفت ===
+    // === New Logic: Progress Bar Update Function ===
     function updateProgressUI(percentage) {
         let message = '';
         
-        // تنظیم پیام‌های رسمی بر اساس درصد
+        // Set official messages based on percentage
         if (percentage === 0) {
             message = "Login successful. Please start uploading your core documents immediately.";
         } else if (percentage < 25) {
@@ -167,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             message = "All documents uploaded. Your application is fully prepared and under legal review by the Embassy.";
         }
         
-        // به‌روزرسانی نوار
+        // Update bar
         progressContainer.classList.remove('hidden');
         progressBarFill.style.width = `${percentage}%`;
         progressPercentage.textContent = `${percentage}%`;
@@ -177,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ------------------------------------------------------------------
 
 
-    // === مدیریت لاگین (به‌روزرسانی شده برای نوار پیشرفت) ===
+    // === Login Management (Updated for Progress Bar) ===
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -185,14 +190,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const passwordInput = document.getElementById('password').value.trim();
         const ceuInput = document.getElementById('ceu-number-login').value.trim();
         
-        // نمایش انیمیشن لاگین
+        // Show login animation
         loadingOverlay.classList.remove('hidden');
 
-        // شبیه‌سازی تأخیر در اتصال به سرور
+        // Simulate server connection delay
         setTimeout(() => {
             loadingOverlay.classList.add('hidden');
             
-            // جستجوی کاربر در آرایه
+            // Search for user in the array
             currentUser = userData.find(user => 
                 user.username.toUpperCase() === usernameInput && 
                 user.password === passwordInput && 
@@ -200,30 +205,30 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (currentUser) {
-                // لاگین موفق:
+                // Successful login:
                 updateSidebarInfo(); 
 
                 loginPage.classList.add('hidden');
                 dashboardLayout.classList.remove('hidden');
                 loginError.classList.add('hidden');
                 
-                // --- به‌روزرسانی نوار پیشرفت پس از ورود ---
+                // --- Update progress bar after login ---
                 const progress = calculateProgress(currentUser);
                 updateProgressUI(progress);
                 
-                // بارگذاری محتوای اولیه
+                // Load initial content
                 loadDashboardContent('application-form-btn');
 
             } else {
-                // لاگین ناموفق
+                // Failed login
                 loginError.classList.remove('hidden');
-                progressContainer.classList.add('hidden'); // مخفی کردن نوار پیشرفت در صورت خطا
+                progressContainer.classList.add('hidden'); // Hide progress bar on error
                 currentUser = null; 
             }
         }, 2000); 
     });
 
-    // === مدیریت خروج (به‌روزرسانی شده برای نوار پیشرفت) ===
+    // === Logout Management (Updated for Progress Bar) ===
     logoutBtn.addEventListener('click', function() {
         loadingOverlay.classList.remove('hidden');
 
@@ -236,12 +241,57 @@ document.addEventListener('DOMContentLoaded', () => {
             loginForm.reset();
             currentUser = null; 
             
-            // --- مخفی کردن نوار پیشرفت پس از خروج ---
+            // --- Hide progress bar after logout ---
             progressContainer.classList.add('hidden');
+            // Ensure any active sidebar button is reset
+            sidebarButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Ensure login form is visible if signup message was showing
+            if (signupMessageBox) signupMessageBox.classList.add('hidden');
+            if (loginForm) loginForm.classList.remove('hidden');
+            
         }, 1000); 
     });
+    
+    // ------------------------------------------------------------------
+    // === Login/Signup Toggle Logic ===
+    // ------------------------------------------------------------------
+    if (loginForm && signupMessageBox && signupBtn && backToLoginBtn) {
 
-    // === تابع بارگذاری محتوای داینامیک ===
+        // Function to show signup message and hide login form
+        function showSignupMessage() {
+            if (loginForm) loginForm.classList.add('hidden');
+            if (signupMessageBox) signupMessageBox.classList.remove('hidden');
+            if (loginError) loginError.classList.add('hidden'); // Hide login error on switch
+        }
+
+        // Function to show login form and hide signup message
+        function showLoginForm() {
+            if (signupMessageBox) signupMessageBox.classList.add('hidden');
+            if (loginForm) loginForm.classList.remove('hidden');
+            
+            // Ensure previous login error is hidden on return
+            const loginError = document.getElementById('login-error');
+            if (loginError) loginError.classList.add('hidden');
+        }
+
+        // Event listener for "Sign Up" button
+        signupBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            showSignupMessage();
+        });
+
+        // Event listener for "Back to Login" button
+        backToLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showLoginForm();
+        });
+    }
+    // ------------------------------------------------------------------
+    // ------------------------------------------------------------------
+
+
+    // === Dynamic Content Loading Function ===
     function loadDashboardContent(buttonId) {
         if (!currentUser) return;
 
@@ -252,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let contentHTML = '';
 
-        // منطق برای دکمه‌هایی که نیاز به لینک‌های اختصاصی کاربر دارند
+        // Logic for buttons that need specific user links
         switch(buttonId) {
             case 'application-form-btn':
                 contentHTML = `
@@ -299,15 +349,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 break;
 
-            // منطق پیش‌فرض برای دکمه‌های آپلود
+            // Default logic for upload buttons
             case 'upload-passport-btn':
             case 'upload-finger-btn':
             case 'upload-danger-btn':
             case 'upload-residence-btn':
             case 'upload-education-btn':
             case 'upload-identity-btn':
-            case 'upload-photo-btn': // اضافه کردن دکمه عکس
-            case 'upload-documents-btn': // نام گذاری دیگر برای آپلود اسناد هویتی
+            case 'upload-photo-btn':
+            case 'upload-documents-btn':
             default:
                 contentHTML = `
                     <div class="alert-box primary"><i class="fas fa-file-upload"></i><p>This is the upload area for **${title}**. Please use high-resolution PDF files only.</p></div>
@@ -320,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contentPlaceholder.innerHTML = contentHTML;
     }
 
-    // اضافه کردن شنونده رویداد به دکمه‌های سایدبار
+    // Add event listener to sidebar buttons
     sidebarButtons.forEach(button => {
         button.addEventListener('click', function() {
             if (!currentUser) return;
