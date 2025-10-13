@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- داده‌های کاربری (جایگزین فایل data.js) ---
+    // --- داده‌های کاربری ---
     const userData = [
         {
             username: "BIBI SAYEDA",
@@ -79,9 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     ];
+    
     // --- متغیر سراسری برای نگهداری اطلاعات کاربر فعلی ---
     let currentUser = null; 
 
+    // --- تعریف متغیرهای DOM اصلی ---
     const loginForm = document.getElementById('login-form');
     const logoutBtn = document.getElementById('logout-btn');
     const loadingOverlay = document.getElementById('loading-overlay');
@@ -94,6 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const applicantName = document.getElementById('applicant-name');
     const applicantCaseId = document.getElementById('applicant-case-id');
     const infoIcon = document.getElementById('info-icon');
+    
+    // --- متغیرهای جدید DOM برای نوار پیشرفت (از فوتر) ---
+    const progressContainer = document.getElementById('progress-container');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressPercentage = document.getElementById('progress-percentage');
+    const progressMessage = document.getElementById('progress-message');
 
 
     // === تابع به‌روزرسانی اطلاعات سایدبار ===
@@ -111,9 +119,65 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+    
+    // ------------------------------------------------------------------
+    // === منطق جدید: محاسبه درصد تکمیل مدارک برای نوار پیشرفت ===
+    // ------------------------------------------------------------------
+    function calculateProgress(user) {
+        if (!user || !user.links) return 0;
+
+        // دکمه‌هایی که معادل آپلود یک مدرک مهم هستند
+        const requiredUploads = [
+            'uploadPassport', 
+            'uploadDocuments', // اسناد هویتی
+            'unhcrLetter', 
+            'uploadFinger',
+            'AppointmentResult', // اگر لینک نتیجه نوبت‌دهی موجود باشد، یک مرحله مهم طی شده است.
+            // توجه: uploadPhoto، uploadIdentity، uploadDanger، uploadResidence و finalResult نیز می‌توانند به این لیست اضافه شوند.
+        ];
+        
+        const totalSteps = requiredUploads.length;
+        let completedSteps = 0;
+
+        requiredUploads.forEach(key => {
+            // فرض: اگر لینک مربوط به مدرک وجود داشته باشد و مقدار آن یک URL معتبر باشد (شامل http باشد)، یعنی آپلود شده/موجود است.
+            if (user.links[key] && user.links[key].includes('http')) {
+                completedSteps++;
+            }
+        });
+
+        const percentage = Math.round((completedSteps / totalSteps) * 100);
+        return percentage;
+    }
+
+    // === منطق جدید: تابع به‌روزرسانی نوار پیشرفت ===
+    function updateProgressUI(percentage) {
+        let message = '';
+        
+        // تنظیم پیام‌های رسمی بر اساس درصد
+        if (percentage === 0) {
+            message = "Login successful. Please start uploading your core documents immediately.";
+        } else if (percentage < 25) {
+            message = "Initial documentation is required. Please upload your core documents.";
+        } else if (percentage < 75) {
+            message = "Your file is being processed. Complete all missing uploads to expedite review.";
+        } else if (percentage < 100) {
+            message = "Documentation phase nearing completion. Your case is preparing for consular review.";
+        } else {
+            message = "All documents uploaded. Your application is fully prepared and under legal review by the Embassy.";
+        }
+        
+        // به‌روزرسانی نوار
+        progressContainer.classList.remove('hidden');
+        progressBarFill.style.width = `${percentage}%`;
+        progressPercentage.textContent = `${percentage}%`;
+        progressMessage.textContent = message;
+    }
+    // ------------------------------------------------------------------
+    // ------------------------------------------------------------------
 
 
-    // === مدیریت لاگین ===
+    // === مدیریت لاگین (به‌روزرسانی شده برای نوار پیشرفت) ===
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -136,12 +200,16 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (currentUser) {
-                // لاگین موفق: به‌روزرسانی اطلاعات، نمایش داشبورد
-                updateSidebarInfo(); // اطلاعات کاربر را در سایدبار پر می‌کند
+                // لاگین موفق:
+                updateSidebarInfo(); 
 
                 loginPage.classList.add('hidden');
                 dashboardLayout.classList.remove('hidden');
                 loginError.classList.add('hidden');
+                
+                // --- به‌روزرسانی نوار پیشرفت پس از ورود ---
+                const progress = calculateProgress(currentUser);
+                updateProgressUI(progress);
                 
                 // بارگذاری محتوای اولیه
                 loadDashboardContent('application-form-btn');
@@ -149,12 +217,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // لاگین ناموفق
                 loginError.classList.remove('hidden');
-                currentUser = null; // اطمینان از پاک شدن اطلاعات کاربر
+                progressContainer.classList.add('hidden'); // مخفی کردن نوار پیشرفت در صورت خطا
+                currentUser = null; 
             }
         }, 2000); 
     });
 
-    // === مدیریت خروج ===
+    // === مدیریت خروج (به‌روزرسانی شده برای نوار پیشرفت) ===
     logoutBtn.addEventListener('click', function() {
         loadingOverlay.classList.remove('hidden');
 
@@ -165,13 +234,16 @@ document.addEventListener('DOMContentLoaded', () => {
             loginPage.classList.remove('hidden');
 
             loginForm.reset();
-            currentUser = null; // پاک کردن کاربر فعلی
+            currentUser = null; 
+            
+            // --- مخفی کردن نوار پیشرفت پس از خروج ---
+            progressContainer.classList.add('hidden');
         }, 1000); 
     });
 
     // === تابع بارگذاری محتوای داینامیک ===
     function loadDashboardContent(buttonId) {
-        if (!currentUser) return; // اطمینان از لاگین بودن
+        if (!currentUser) return;
 
         const button = document.getElementById(buttonId);
         const title = button.textContent.trim();
@@ -234,6 +306,8 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'upload-residence-btn':
             case 'upload-education-btn':
             case 'upload-identity-btn':
+            case 'upload-photo-btn': // اضافه کردن دکمه عکس
+            case 'upload-documents-btn': // نام گذاری دیگر برای آپلود اسناد هویتی
             default:
                 contentHTML = `
                     <div class="alert-box primary"><i class="fas fa-file-upload"></i><p>This is the upload area for **${title}**. Please use high-resolution PDF files only.</p></div>
