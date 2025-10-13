@@ -1,70 +1,82 @@
-/* متغیرهای رنگ رسمی */
+/* ------------------------------------------------------------------ */
+/* 1. متغیرهای رنگ رسمی و Base Styles */
+/* ------------------------------------------------------------------ */
 :root {
-    --main-blue: #00479A; /* Deep Official Blue (رنگ اصلی ایتالیا) */
+    --main-blue: #00479A; /* Deep Official Blue (آبی رسمی ایتالیا) */
     --light-blue: #0056b3;
     --secondary-color: #6c757d; /* Grey */
     --danger-color: #CC0000; /* Official Red for alerts/logout */
     --success-color: #28a745; /* Green */
     --border-radius: 6px;
-    /* متغیر جدید برای پدینگ موبایل */
-    --mobile-padding: 15px; 
+    --mobile-padding: 15px;
+    --font-family-fa: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Base Styles */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7f6;
+    /* ------------------------------------------------------------------ */
+    /* *** پس‌زمینه درخواستی: Residenza.jpg *** */
+    /* ------------------------------------------------------------------ */
+    background: url('Residenza.jpg') no-repeat center center fixed;
+    background-color: #f4f7f6; /* رنگ پیش‌فرض در صورت عدم بارگذاری تصویر */
+    background-size: cover; /* پوشش کامل پس‌زمینه */
+    
+    /* ------------------------------------------------------------------ */
+    
+    font-family: var(--font-family-fa);
     margin: 0;
     padding: 0;
     color: #333;
+    min-height: 100vh;
+    direction: ltr; /* مطابق با طراحی انگلیسی/سیستم مدیریت */
+    text-align: left;
 }
 
-حتماً. من کد $\text{CSS}$ هدر و لوگو را طوری ویرایش می‌کنم که هر دو فشرده‌تر و کوچک‌تر شوند.
+a {
+    text-decoration: none;
+    color: var(--main-blue);
+    transition: color 0.2s;
+}
 
-تغییرات زیر اعمال شده‌اند:
-
-1.  **پدینگ هدر ($\text{.official-header}$):** پدینگ بالا و پایین از $\text{15px}$ به **$\text{10px}$** کاهش یافت تا ارتفاع کلی هدر کم شود.
-2.  **لگو ($\text{.logo}$):** عرض لوگو از $\text{180px}$ به **$\text{120px}$** کاهش یافت.
-3.  **عنوان ($\text{.title-section h1}$):** اندازه فونت عنوان اصلی نیز برای متناسب بودن با هدر کوچک‌تر، از $\text{1.8em}$ به **$\text{1.6em}$** کاهش یافت.
-
-کد زیر را می‌توانید در بخش هدر فایل $\text{style.css}$ خود جایگزین کنید:
-
-## $\text{CSS}$ هدر و لوگو (کوچک‌شده) 🤏
-
-```css
-/* Official Header */
+/* ------------------------------------------------------------------ */
+/* 2. Official Header */
+/* ------------------------------------------------------------------ */
 .official-header {
     background-color: var(--main-blue);
     color: white;
-    /* کاهش پدینگ عمودی از 15px به 10px برای کوچک شدن ارتفاع هدر */
-    padding: 10px 30px; 
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px 30px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1300px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
 .logo {
-    /* کاهش عرض لگو از 180px به 120px */
-    width: 120px; 
+    width: 100px; /* اندازه استاندارد لوگوی دولتی */
     height: auto;
+}
+
+.title-section {
+    flex-grow: 1;
+    margin: 0 20px;
 }
 
 .title-section h1 {
     margin: 0;
-    /* کاهش اندازه عنوان از 1.8em به 1.6em */
-    font-size: 1.6em; 
+    font-size: 1.5em; 
     font-weight: 600;
+    line-height: 1.2;
+    color: white; /* اطمینان از سفید بودن عنوان */
 }
 
 .title-section p {
-    margin: 0;
-    font-size: 0.9em;
+    margin: 5px 0 0;
+    font-size: 0.8em;
     opacity: 0.9;
 }
 
@@ -73,45 +85,235 @@ body {
     text-align: right;
     opacity: 0.9;
 }
-```
-/* Main Dashboard Layout */
+
+.contact-info p {
+    margin: 2px 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Login Page Styles (واضح و تمیز) */
+/* ------------------------------------------------------------------ */
+#main-content {
+    /* برای مرکز قرار گرفتن Login Page در صفحه */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 150px); /* تنظیم ارتفاع با در نظر گرفتن Header و Footer */
+    padding: 40px 20px;
+}
+
+#login-page {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-container {
+    max-width: 450px;
+    width: 100%;
+    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.95); /* کمی شفافیت برای دیدن پس‌زمینه */
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border-top: 5px solid var(--main-blue);
+}
+
+.form-container h2 {
+    text-align: center;
+    color: var(--main-blue);
+    margin-bottom: 25px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    font-weight: 700;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #444;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    border-color: var(--main-blue);
+    box-shadow: 0 0 5px rgba(0, 71, 154, 0.3);
+    outline: none;
+}
+
+/* General Buttons */
+/* اصلاح: این استایل برای دکمه های درون button-group در موبایل توسط media query لغو خواهد شد */
+.official-button {
+    background-color: var(--main-blue);
+    color: white;
+    padding: 12px 15px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    font-weight: 600;
+    /* این را برای دکمه های داخل button-group لغو می کنیم تا در کنار هم قرار گیرند */
+    /* width: 100%; */ 
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.05em;
+}
+
+.official-button:hover {
+    background-color: var(--light-blue);
+}
+
+.official-button:active {
+    transform: scale(0.99);
+}
+
+.logout-button {
+    background-color: var(--danger-color) !important;
+    width: 100%; /* این دکمه همیشه تمام عرض را بگیرد */
+}
+
+.logout-button:hover {
+    background-color: #a00000 !important;
+}
+
+.error-message {
+    color: var(--danger-color);
+    text-align: center;
+    margin-top: 15px;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+/* --- استایل های دکمه های ورود/ثبت نام --- */
+.button-group {
+    display: flex;
+    justify-content: space-between; 
+    gap: 15px; 
+    margin-top: 20px;
+    direction: ltr;
+}
+
+.button-group .official-button {
+    flex-grow: 1; 
+    width: auto; /* لغو width: 100% برای کنار هم قرارگیری */
+    margin-top: 0;
+}
+
+.secondary-button {
+    background-color: #f1f1f1; /* رنگ خاکستری روشن */
+    color: var(--main-blue); 
+    border: 1px solid #ccc;
+}
+
+.secondary-button:hover {
+    background-color: #ddd;
+    color: var(--main-blue);
+}
+
+/* استایل برای کادر پیام (Signup) */
+.info-box {
+    background-color: #f0f8ff; 
+    border: 1px solid var(--main-blue);
+    padding: 25px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: right; 
+}
+
+.info-box h3 {
+    color: var(--main-blue);
+    margin-top: 0;
+    border-bottom: 2px solid var(--main-blue);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+.info-box p {
+    text-align: right; 
+    margin-bottom: 15px;
+    line-height: 1.8; 
+}
+
+.info-box .contact-details {
+    background-color: #e6f0ff;
+    border: 1px dashed #a0c4ff;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 6px;
+    text-align: left; 
+}
+
+.info-box .contact-details p {
+    margin: 5px 0;
+    font-weight: bold;
+    direction: ltr; 
+}
+
+.info-box .contact-details a {
+    color: var(--main-blue);
+    text-decoration: none;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 4. Dashboard Layout */
+/* ------------------------------------------------------------------ */
 #dashboard-layout {
     display: flex;
-    min-height: calc(100vh - 120px);
-    max-width: 1300px;
+    max-width: 1400px;
     margin: 20px auto;
+    background-color: white;
     border-radius: var(--border-radius);
     overflow: hidden;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-    background-color: white;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    min-height: 80vh;
 }
 
 /* Sidebar Styles */
 .sidebar {
     width: 300px;
-    background-color: #ffffff; /* White background for clean look */
+    min-width: 250px; /* اطمینان از حداقل عرض در دسکتاپ */
+    background-color: #f8f9fa; 
     padding: 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
-    overflow-y: auto;
-    border-right: 1px solid #eee;
+    border-right: 3px solid var(--main-blue); 
+    flex-shrink: 0;
 }
 
 .applicant-info {
     padding: 20px;
     text-align: center;
-    border-bottom: 2px solid var(--main-blue); /* خط آبی رسمی */
-    margin-bottom: 10px;
-    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    background-color: #e9ecef;
 }
 
 .applicant-info h3 {
     margin: 10px 0 5px;
-    font-size: 1.1em;
+    font-size: 1.2em;
+    color: var(--main-blue);
 }
 
 .applicant-info p {
     margin: 0;
-    font-size: 0.8em;
+    font-size: 0.9em;
     color: var(--secondary-color);
 }
 
@@ -120,9 +322,10 @@ body {
     font-size: 0.8em;
     font-weight: 700;
     padding: 10px 20px;
-    margin-top: 10px;
+    margin-top: 15px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    border-bottom: 1px solid #eee;
 }
 
 .dashboard-button {
@@ -138,7 +341,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    border-left: 3px solid transparent;
+    border-left: 5px solid transparent;
 }
 
 .dashboard-button i {
@@ -153,11 +356,15 @@ body {
 .dashboard-button.active {
     background-color: var(--main-blue);
     color: white;
-    border-left: 3px solid var(--success-color); /* یا رنگ متضاد دیگر برای فعال بودن */
+    border-left: 5px solid var(--success-color); 
+}
+
+.dashboard-button.active i {
+    color: white;
 }
 
 .dashboard-button:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
     color: #777;
     background-color: #f1f1f1;
@@ -170,106 +377,96 @@ body {
     background-color: white;
 }
 
-/* Login Page Styles */
-#login-page {
+.dashboard-content h2 {
+    color: var(--main-blue);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Footer & Progress Bar */
+/* ------------------------------------------------------------------ */
+.official-footer {
+    background-color: var(--main-blue);
+    color: white;
+    padding: 15px 30px;
+    font-size: 0.8em;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; 
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-content p {
+    margin: 0;
+}
+
+/* Progress Bar Styles */
+.progress-container {
+    width: 400px;
+    text-align: left;
+}
+
+.progress-container p {
+    margin-bottom: 5px;
+}
+
+#progress-percentage {
+    font-weight: bold;
+    color: var(--success-color);
+}
+
+.progress-bar-shell {
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--success-color);
+    transition: width 0.5s ease-in-out;
+}
+
+#progress-message {
+    font-size: 0.75em;
+    opacity: 0.9;
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Loading Overlay */
+/* ------------------------------------------------------------------ */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    z-index: 9999;
 }
 
-.form-container {
-    max-width: 400px;
-    width: 100%;
-    padding: 30px;
-    background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+#loading-overlay.hidden {
+    display: none !important;
 }
 
-.form-container h2 {
-    text-align: center;
-    color: var(--main-blue);
-    margin-bottom: 20px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: var(--border-radius);
-    box-sizing: border-box;
-    font-size: 1em;
-}
-
-/* General Buttons */
-.official-button {
-    background-color: var(--main-blue);
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-weight: 600;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.official-button:hover {
-    background-color: var(--light-blue);
-}
-
-.logout-button {
-    background-color: var(--danger-color) !important;
-}
-
-.logout-button:hover {
-    background-color: #a00000 !important;
-}
-
-/* Error and Alert Messages */
-.error-message {
-    color: var(--danger-color);
-    text-align: center;
-    margin-top: 15px;
-    font-weight: 600;
-}
-
-.alert-box {
-    padding: 15px;
-    border-radius: var(--border-radius);
-    margin-top: 20px;
-    display: flex;
-    gap: 15px;
-    align-items: flex-start;
-}
-
-.alert-box.primary {
-    background-color: #e7f3ff;
-    border: 1px solid var(--main-blue);
-    color: #000;
-}
-
-.alert-box.primary strong {
-    color: var(--danger-color);
-}
-
-.alert-box i {
-    font-size: 1.5em;
-    color: var(--main-blue);
+.loading-spinner img {
+    width: 60px; 
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Utility Class */
@@ -277,258 +474,233 @@ body {
     display: none !important;
 }
 
-/* Loading Animation (Overlay) */
-#loading-overlay {
+/* ================================================================== */
+/* 7. Media Queries (واکنش‌گرا) - تغییرات ریسپانسیو */
+/* ================================================================== */
+
+/* Medium Devices (Tablets/Smaller Laptops) - Header Wrap */
+@media (max-width: 992px) {
+    .header-content {
+        flex-wrap: wrap;
+        text-align: center;
+        padding: 15px;
+    }
+
+    /* تنظیم چینش و ترتیب عناصر Header */
+    .logo-section {
+        flex-basis: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+        order: 1;
+    }
+    
+    .title-section {
+        flex-basis: 100%;
+        margin: 0;
+        text-align: center;
+        order: 2;
+    }
+    
+    .contact-info {
+        flex-basis: 100%;
+        order: 3;
+        font-size: 0.75em;
+        /* مطمئن شوید که تمام تماس‌ها مرکز چین می‌شوند */
+        text-align: center !important; 
+        direction: ltr; 
+    }
+}
+
+
+/* Small Devices (Mobile Phones/Tablets) - Dashboard Stacking */
+@media (max-width: 768px) {
+    
+    /* Main Layout Stacking (Sidebar goes on top) */
+    #dashboard-layout {
+        flex-direction: column; 
+        margin: 10px;
+        box-shadow: none;
+        min-height: auto;
+    }
+
+    .sidebar {
+        width: 100%; /* عرض کامل موبایل */
+        border-right: none;
+        border-bottom: 3px solid var(--main-blue);
+    }
+    
+    .dashboard-content {
+        padding: 20px 15px;
+    }
+    
+    /* Footer Stacking */
+    .official-footer {
+        padding: 15px;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .progress-container {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .footer-content p {
+        text-align: center;
+    }
+}
+
+/* Extra Small Devices (Smartphones) - Button Stacking and Padding Reduction */
+@media (max-width: 576px) {
+    .form-container {
+        padding: 20px;
+    }
+    
+    /* Force login/signup buttons to stack vertically for easy tapping */
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    /* اطمینان حاصل کنید که دکمه‌ها در حالت ستونی تمام عرض را می‌گیرند */
+    .button-group .official-button {
+        width: 100%; 
+        margin-top: 0;
+    }
+    
+    /* کاهش فضای خالی در موبایل */
+    .official-header {
+        padding: 10px 0;
+    }
+
+    #main-content {
+        padding: 10px;
+        min-height: calc(100vh - 100px); 
+    }
+    
+    .title-section h1 {
+        font-size: 1.2em;
+    }
+    
+    .logo {
+        width: 80px;
+    }
+}
+/* ------------------------------------------------------------------ */
+/* 7. New Header Navigation & Fixed Header Styles */
+/* ------------------------------------------------------------------ */
+
+/* Fixed Header: قفل کردن هدر در بالای صفحه */
+.fixed-header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.9); /* پس‌زمینه نیمه‌شفاف */
+    z-index: 100; /* اطمینان از قرارگیری بالای سایر محتوا */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Header Spacer: اضافه کردن فضای خالی در محتوا برای جلوگیری از مخفی شدن زیر هدر فیکس شده */
+.header-spacer {
+    /* ارتفاع هدر را با پدینگ آن جمع کنید: 10px (پدینگ بالا) + 10px (پدینگ پایین) + 
+       ارتفاع محتوا (تقریبا 100px) */
+    height: 120px; 
+    display: block;
+}
+
+/* ناوبری جدید (Header Navigation) */
+.header-nav {
+    flex-grow: 1; /* اجازه رشد به ناوبری برای پر کردن فضای خالی */
+    text-align: right;
+    margin-right: 20px; /* فاصله از عنوان */
+}
+
+.header-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end; /* تراز لینک‌ها به راست */
+}
+
+.header-nav li {
+    margin-left: 20px;
+}
+
+.header-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 5px 0;
+    border-bottom: 2px solid transparent; /* برای افکت هاور */
+    transition: border-bottom 0.2s, opacity 0.2s;
+}
+
+.header-nav a:hover {
+    border-bottom: 2px solid white; /* خط سفید در زیر لینک */
+    opacity: 0.9;
+}
+
+/* تنظیمات مجدد Header Content برای مدیریت آیتم‌های جدید */
+.header-content {
+    /* تغییر: contact-info و header-nav در یک خط */
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    z-index: 1000;
-}
-
-.loading-spinner img {
-    /* فرض کنید loading.gif یک انیمیشن با ابعاد مناسب است */
-    width: 80px; 
-    height: 80px;
-    border-radius: 50%;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Footer Styles Update */
-.official-footer {
-    background-color: #333;
-    color: #ccc;
-    text-align: center;
-    padding: 10px 0; /* padding عمودی برای ایجاد فضا */
-    font-size: 0.8em;
-}
-
-.footer-content {
     max-width: 1300px;
     margin: 0 auto;
-    padding: 0 20px;
+    flex-wrap: wrap; /* اجازه شکستن در موبایل */
 }
 
-/* Progress Bar Styles */
-.progress-container {
-    background-color: #444; /* رنگ پس‌زمینه تیره برای کنتراست در فوتر */
-    padding: 10px 20px;
-    border-radius: var(--border-radius);
-    margin-bottom: 10px;
-    text-align: left;
-}
-
-.progress-container p {
-    margin: 0 0 5px 0;
-    color: #f1f1f1;
-    font-weight: 500;
-}
-
-.progress-bar-shell {
-    width: 100%;
-    height: 10px;
-    background-color: #555;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background-color: var(--success-color); /* سبز برای نشان دادن تکمیل */
-    transition: width 0.8s ease-in-out; /* انیمیشن نرم برای تغییر درصد */
-}
-
-#progress-percentage {
-    font-weight: 700;
-    color: #fff;
-    margin-left: 5px;
-}
-
-#progress-message {
-    font-style: italic;
-    font-size: 0.8em;
-    color: #ccc;
-    margin-top: 5px !important;
-}
-
-/* ------------------------------------------------------------------ */
-/* Media Queries for Responsiveness (موبایل و دسکتاپ) */
-/* ------------------------------------------------------------------ */
-
-/* تنظیمات موبایل (صفحه نمایش کوچک، پیش‌فرض) */
-
-/* هدر */
-.official-header {
-    padding: 15px var(--mobile-padding); /* پدینگ کمتر برای موبایل */
-}
-
-.header-content {
-    flex-wrap: wrap; /* اجازه شکست خط در موبایل */
-}
-
-.logo {
-    width: 150px; /* کاهش سایز لوگو */
-}
-
-.title-section h1 {
-    font-size: 1.4em; /* کاهش اندازه عنوان */
-}
-
-.contact-info {
-    font-size: 0.7em;
-    width: 100%; /* اشغال خط کامل */
-    text-align: left;
-    order: 3; /* انتقال به پایین در موبایل */
-    margin-top: 10px;
-}
-
-/* داشبورد */
-#dashboard-layout {
-    flex-direction: column; /* حالت ستونی: سایدبار در بالا، محتوا در پایین */
-    max-width: 100%; /* عرض کامل */
-    margin: 0; 
-    box-shadow: none; 
-}
-
-/* سایدبار در موبایل */
-.sidebar {
-    width: 100%; /* عرض کامل */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    border-right: none;
-    border-bottom: 1px solid #eee; /* خط تفکیک */
-    max-height: 350px; /* برای جلوگیری از اشغال تمام صفحه */
-}
-
-.applicant-info {
-    padding: 15px;
-}
-
-.applicant-info h3 {
-    font-size: 1em;
-}
-
-.menu-section-title {
-    padding: 10px var(--mobile-padding);
-}
-
-.dashboard-button {
-    padding: 10px var(--mobile-padding); /* پدینگ کمتر */
-    font-size: 0.9em;
-}
-
-/* محتوا */
-.dashboard-content {
-    padding: var(--mobile-padding); /* پدینگ کمتر */
-}
-
-/* فوتر و نوار پیشرفت در موبایل */
-.footer-content {
-    padding: 0 var(--mobile-padding);
-}
-
-.progress-container {
-    padding: 8px var(--mobile-padding);
-}
-
-.progress-container p {
-    font-size: 0.75em;
-}
-
-.progress-bar-shell {
-    height: 8px; /* ارتفاع کمتر */
-}
-
-#progress-message {
-    font-size: 0.7em;
-}
-
-/* ------------------------------------------------------------------ */
-
-/* Media Query برای دسکتاپ (صفحات بزرگتر از 768px) */
-@media (min-width: 768px) {
+/* Media Query برای موبایل: مرتب‌سازی آیتم‌های هدر */
+@media (max-width: 768px) {
     
-    /* هدر */
-    .official-header {
-        padding: 15px 30px;
+    .header-spacer {
+        /* در موبایل ارتفاع هدر بیشتر می‌شود، فضا را بیشتر می‌کنیم */
+        height: 180px; 
     }
-
-    .logo {
-        width: 180px;
+    
+    .header-content {
+        /* در موبایل، لینک‌ها را زیر عناوین اصلی می‌آوریم */
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .logo-section, .title-section, .contact-info {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 5px;
     }
 
     .title-section h1 {
-        font-size: 1.8em;
+        font-size: 1.4em;
     }
 
     .contact-info {
-        font-size: 0.8em;
-        width: auto;
-        text-align: right;
-        order: initial;
-        margin-top: 0;
+        order: 4; /* جابجایی تماس به پایین */
+        text-align: center !important;
+        direction: rtl !important; /* بازگرداندن به راست برای فارسی */
     }
 
-    /* داشبورد */
-    #dashboard-layout {
-        flex-direction: row; /* حالت دسکتاپ: سایدبار و محتوا کنار هم */
-        max-width: 1300px;
-        margin: 20px auto;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-        border-radius: var(--border-radius);
+    .header-nav {
+        order: 3; /* ناوبری زیر عنوان اصلی */
+        width: 100%;
+        margin: 10px 0;
+        text-align: center;
     }
 
-    /* سایدبار در دسکتاپ */
-    .sidebar {
-        width: 300px; /* عرض ثابت */
-        border-right: 1px solid #eee;
-        border-bottom: none;
-        max-height: none;
+    .header-nav ul {
+        justify-content: center; /* تراز وسط در موبایل */
+        flex-wrap: wrap;
     }
 
-    .applicant-info {
-        padding: 20px;
-    }
-
-    .menu-section-title {
-        padding: 10px 20px;
-    }
-
-    .dashboard-button {
-        padding: 12px 20px;
-    }
-
-    /* محتوا */
-    .dashboard-content {
-        padding: 30px;
-    }
-
-    /* فوتر و نوار پیشرفت در دسکتاپ */
-    .footer-content {
-        padding: 0 20px;
-    }
-
-    .progress-container {
-        padding: 10px 20px;
-    }
-
-    .progress-container p {
-        font-size: 0.8em;
-    }
-
-    .progress-bar-shell {
-        height: 10px;
-    }
-
-    #progress-message {
-        font-size: 0.8em;
+    .header-nav li {
+        margin: 5px 10px;
     }
 }
-
-
-
-
