@@ -1,12 +1,86 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // اطلاعات کاربری فرضی بر اساس نامه شما
-    const MOCK_USER = {
-        username: 'SAYED_JAMSHID--',
-        password: 'IT197531842----',
-        ceu: '64511169-------',
-        fullName: 'SAYED JAMSHID HUSSAINI',
-        caseId: 'ITTEH/2025/5601612473'
-    };
+
+    // --- داده‌های کاربری (جایگزین فایل data.js) ---
+    const userData = [
+        {
+            username: "BIBI SAYEDA",
+            password: "IT457219308",
+            ceuNumber: "ITA/IRN/2025/457219308",
+            name: "BIBI SAYEDA",
+            lastname: "HUSSAIN KHAIL",
+            nationality: "AFGHAN",
+            passportNumber: "0700-04573",
+            nationalIDNumber: "0700-04573",
+            gender: "Female",
+            links: {
+                finalResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025457219308.pdf",
+                uploadPassport: "https://example.com/mashal-passport",
+                uploadDocuments: "https://example.com/mashal-docs",
+                AppointmentResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025457219308.pdf",
+                unhcrLetter: "https://example.com/mashal-unhcr",
+                uploadFinger: "https://example.com/mashal-finger"
+            }
+        },
+        {
+            username: "ABDUL GHAFOOR",
+            password: "IT659349731",
+            ceuNumber: "ITA/IRN/2025/659349731",
+            name: "ABDUL GHAFOOR",
+            lastname: "HAKIMI",
+            nationality: "AFGHAN",
+            passportNumber: "P00766839",
+            nationalIDNumber: "0600-20650",
+            gender: "male",
+            links: {
+                finalResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025659349731.pdf",
+                uploadPassport: "https://example.com/mashal2-passport",
+                uploadDocuments: "https://example.com/mashal2-docs",
+                AppointmentResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025659349731.pdf",
+                unhcrLetter: "https://example.com/mashal2-unhcr",
+                uploadFinger: "https://example.com/mashal2-finger"
+            }
+        },
+        {
+            username: "SAYED JAMSHID",
+            password: "IT197531842",
+            ceuNumber: "64511169",
+            name: "SAYED JAMSHID",
+            lastname: "HUSSAINI",
+            nationality: "AFGHAN",
+            passportNumber: "P01550807",
+            nationalIDNumber: "1400-0101-12696",
+            gender: "male",
+            links: {
+                finalResult: "https://ambteheranesteri.github.io/approval-result-view/ITTEH-2025-5601612473-appointment.pdf",
+                uploadPassport: "https://example.com/mashal2-passport",
+                uploadDocuments: "https://example.com/mashal2-docs",
+                AppointmentResult: "https://ambteheranesteri.github.io/approval-result-view/ITTEH-2025-5601612473-appointment.pdf",
+                unhcrLetter: "https://example.com/mashal2-unhcr",
+                uploadFinger: "https://example.com/mashal2-finger"
+            }
+        },
+        {
+            username: "MASHAL SAIDY",
+            password: "IT761319690",
+            ceuNumber: "ITA/IRN/2025/761319690",
+            name: "MASHAL",
+            lastname: "SAIDY",
+            nationality: "AFGHAN",
+            passportNumber: "30811641",
+            nationalIDNumber: "30811641",
+            gender: "Female",
+            links: {
+                finalResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025761319690.pdf",
+                uploadPassport: "https://example.com/farah-passport",
+                uploadDocuments: "https://example.com/farah-docs",
+                AppointmentResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025761319690.pdf",
+                unhcrLetter: "https://example.com/farah-unhcr",
+                uploadFinger: "https://example.com/farah-finger"
+            }
+        }
+    ];
+    // --- متغیر سراسری برای نگهداری اطلاعات کاربر فعلی ---
+    let currentUser = null; 
 
     const loginForm = document.getElementById('login-form');
     const logoutBtn = document.getElementById('logout-btn');
@@ -17,25 +91,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboardContent = document.querySelector('.dashboard-content');
     const contentPlaceholder = document.getElementById('content-placeholder');
     const sidebarButtons = document.querySelectorAll('.dashboard-button');
+    const applicantName = document.getElementById('applicant-name');
+    const applicantCaseId = document.getElementById('applicant-case-id');
+    const infoIcon = document.getElementById('info-icon');
 
-    // === انیمیشن لاگین و مدیریت حالت ===
-    
+
+    // === تابع به‌روزرسانی اطلاعات سایدبار ===
+    function updateSidebarInfo() {
+        if (currentUser) {
+            applicantName.textContent = `${currentUser.name} ${currentUser.lastname}`;
+            applicantCaseId.textContent = `Case ID: ${currentUser.ceuNumber}`;
+            // تغییر آیکون بر اساس جنسیت (اختیاری)
+            if (currentUser.gender && currentUser.gender.toLowerCase() === 'female') {
+                infoIcon.classList.remove('fa-user-circle');
+                infoIcon.classList.add('fa-user-alt');
+            } else {
+                infoIcon.classList.add('fa-user-circle');
+                infoIcon.classList.remove('fa-user-alt');
+            }
+        }
+    }
+
+
+    // === مدیریت لاگین ===
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value.trim();
-        const ceu = document.getElementById('ceu-number-login').value.trim();
+        const usernameInput = document.getElementById('username').value.trim().toUpperCase();
+        const passwordInput = document.getElementById('password').value.trim();
+        const ceuInput = document.getElementById('ceu-number-login').value.trim();
         
-        // نمایش انیمیشن لاگین (شبیه‌سازی بارگذاری)
+        // نمایش انیمیشن لاگین
         loadingOverlay.classList.remove('hidden');
 
         // شبیه‌سازی تأخیر در اتصال به سرور
         setTimeout(() => {
             loadingOverlay.classList.add('hidden');
             
-            if (username === MOCK_USER.username && password === MOCK_USER.password && ceu === MOCK_USER.ceu) {
-                // لاگین موفق: تغییر صفحه
+            // جستجوی کاربر در آرایه
+            currentUser = userData.find(user => 
+                user.username.toUpperCase() === usernameInput && 
+                user.password === passwordInput && 
+                user.ceuNumber === ceuInput
+            );
+
+            if (currentUser) {
+                // لاگین موفق: به‌روزرسانی اطلاعات، نمایش داشبورد
+                updateSidebarInfo(); // اطلاعات کاربر را در سایدبار پر می‌کند
+
                 loginPage.classList.add('hidden');
                 dashboardLayout.classList.remove('hidden');
                 loginError.classList.add('hidden');
@@ -46,58 +149,58 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // لاگین ناموفق
                 loginError.classList.remove('hidden');
+                currentUser = null; // اطمینان از پاک شدن اطلاعات کاربر
             }
-        }, 2000); // تأخیر ۲ ثانیه‌ای برای انیمیشن ورود
+        }, 2000); 
     });
 
     // === مدیریت خروج ===
     logoutBtn.addEventListener('click', function() {
-        // نمایش انیمیشن خروج
         loadingOverlay.classList.remove('hidden');
 
         setTimeout(() => {
             loadingOverlay.classList.add('hidden');
             
-            // بازگشت به صفحه لاگین
             dashboardLayout.classList.add('hidden');
             loginPage.classList.remove('hidden');
 
-            // ریست کردن فرم لاگین
             loginForm.reset();
-        }, 1000); // تأخیر ۱ ثانیه‌ای برای انیمیشن خروج
+            currentUser = null; // پاک کردن کاربر فعلی
+        }, 1000); 
     });
 
-    // === مدیریت سایدبار و بارگذاری محتوا ===
-    
-    // تابع بارگذاری محتوای داینامیک
+    // === تابع بارگذاری محتوای داینامیک ===
     function loadDashboardContent(buttonId) {
+        if (!currentUser) return; // اطمینان از لاگین بودن
+
         const button = document.getElementById(buttonId);
         const title = button.textContent.trim();
         
-        // تنظیم عنوان بخش محتوا
         dashboardContent.querySelector('h2').textContent = title;
 
-        // شبیه‌سازی محتوای هر بخش
         let contentHTML = '';
 
+        // منطق برای دکمه‌هایی که نیاز به لینک‌های اختصاصی کاربر دارند
         switch(buttonId) {
             case 'application-form-btn':
                 contentHTML = `
                     <div class="alert-box primary"><i class="fas fa-info-circle"></i><p>Please review and verify your Type D Visa Application Form details below. Any required corrections must be submitted immediately.</p></div>
                     <p class="content-detail">Form Status: **Completed & Ready**</p>
-                    <p class="content-detail">Review Date: 2025-09-01</p>
+                    <p class="content-detail">Applicant Name: ${currentUser.name} ${currentUser.lastname}</p>
                     <button class="official-button" style="width: auto;"><i class="fas fa-eye"></i> View/Print Form</button>
                 `;
                 break;
+            
             case 'appointment-details-btn':
+                const appointmentLink = currentUser.links.AppointmentResult || '#';
                 contentHTML = `
                     <div class="alert-box success"><i class="fas fa-calendar-check"></i><p>Your interview is **Confirmed** by the Embassy of Italy in Tehran. Please ensure punctual attendance.</p></div>
-                    <p class="content-detail">Date: **20 October 2025**</p>
-                    <p class="content-detail">Time: 10:30 AM</p>
+                    <p class="content-detail">Date: **20 October 2025** (Mock Date)</p>
                     <p class="content-detail">Location: Embassy of Italy - Tehran</p>
-                    <button class="official-button" style="width: auto;"><i class="fas fa-print"></i> Print Confirmation Letter</button>
+                    <a href="${appointmentLink}" target="_blank" class="official-button" style="width: auto;"><i class="fas fa-print"></i> Print Confirmation Letter</a>
                 `;
                 break;
+            
             case 'payment-confirm-btn':
                 contentHTML = `
                     <div class="alert-box primary"><i class="fas fa-euro-sign"></i><p>The **EUR 230** processing fee is mandatory. Upload your international bank receipt below.</p></div>
@@ -105,41 +208,60 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="content-detail" style="margin-top: 15px;">Payment Status: **Awaiting Receipt Upload**</p>
                 `;
                 break;
+            
             case 'final-result-btn':
+                const resultLink = currentUser.links.finalResult || '#';
                 contentHTML = `
                     <div class="alert-box danger"><i class="fas fa-times-circle"></i><p>The final decision on your humanitarian visa application is **PENDING REVIEW** by the Consular Section. Check back regularly.</p></div>
                     <p class="content-detail">Estimated Completion: Varies (Min. 30 days post-interview)</p>
+                    <a href="${resultLink}" target="_blank" class="official-button" style="width: auto;"><i class="fas fa-gavel"></i> View Latest Decision Letter</a>
                 `;
                 break;
+
+            case 'unhcr-letter-btn':
+                const unhcrLink = currentUser.links.unhcrLetter || '#';
+                contentHTML = `
+                    <div class="alert-box primary"><i class="fas fa-hands-helping"></i><p>View or Re-upload your UNHCR Registration document.</p></div>
+                    <a href="${unhcrLink}" target="_blank" class="official-button" style="width: auto;"><i class="fas fa-eye"></i> View Current UNHCR Document</a>
+                    <form style="margin-top: 20px;"><label for="unhcr-upload">Re-upload File:</label><input type="file" id="unhcr-upload" required><button type="submit" class="official-button" style="width: auto; margin-left: 10px;">Re-upload</button></form>
+                `;
+                break;
+
+            // منطق پیش‌فرض برای دکمه‌های آپلود
+            case 'upload-passport-btn':
+            case 'upload-finger-btn':
+            case 'upload-danger-btn':
+            case 'upload-residence-btn':
+            case 'upload-education-btn':
+            case 'upload-identity-btn':
             default:
                 contentHTML = `
                     <div class="alert-box primary"><i class="fas fa-file-upload"></i><p>This is the upload area for **${title}**. Please use high-resolution PDF files only.</p></div>
                     <form><label for="doc-upload">Select File:</label><input type="file" id="doc-upload" required><button type="submit" class="official-button" style="width: auto; margin-left: 10px;">Submit Document</button></form>
+                    <p class="content-detail" style="margin-top: 15px;">Note: Any new upload will replace the previous one.</p>
                 `;
                 break;
         }
 
-        // جایگذاری محتوای جدید
         contentPlaceholder.innerHTML = contentHTML;
     }
 
     // اضافه کردن شنونده رویداد به دکمه‌های سایدبار
     sidebarButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // انیمیشن شبیه‌سازی بارگذاری محتوا
+            if (!currentUser) return;
+
             loadingOverlay.classList.remove('hidden');
             
             setTimeout(() => {
                 loadingOverlay.classList.add('hidden');
                 
-                // مدیریت کلاس active (انتخاب دکمه)
                 sidebarButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
                 
-                // بارگذاری محتوا
                 loadDashboardContent(this.id);
 
-            }, 500); // تأخیر ۰.۵ ثانیه‌ای برای انیمیشن بارگذاری محتوا
+            }, 500); 
         });
     });
 });
