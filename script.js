@@ -1,166 +1,145 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.getElementById('login-form');
-  const searchForm = document.getElementById('search-form');
-  const trackButton = document.getElementById('track-application-button');
-  const loadingOverlay = document.getElementById('loading-overlay');
+    // اطلاعات کاربری فرضی بر اساس نامه شما
+    const MOCK_USER = {
+        username: 'SAYED_JAMSHID--',
+        password: 'IT197531842----',
+        ceu: '64511169-------',
+        fullName: 'SAYED JAMSHID HUSSAINI',
+        caseId: 'ITTEH/2025/5601612473'
+    };
 
-  const loginPage = document.getElementById('login-page');
-  const searchPage = document.getElementById('search-page');
-  const dashboardPage = document.getElementById('dashboard-page');
-  const loginError = document.getElementById('login-error');
-  const searchError = document.getElementById('search-error');
+    const loginForm = document.getElementById('login-form');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loginPage = document.getElementById('login-page');
+    const dashboardLayout = document.getElementById('dashboard-layout');
+    const loginError = document.getElementById('login-error');
+    const dashboardContent = document.querySelector('.dashboard-content');
+    const contentPlaceholder = document.getElementById('content-placeholder');
+    const sidebarButtons = document.querySelectorAll('.dashboard-button');
 
-  let currentUser = null;
+    // === انیمیشن لاگین و مدیریت حالت ===
+    
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const ceu = document.getElementById('ceu-number-login').value.trim();
+        
+        // نمایش انیمیشن لاگین (شبیه‌سازی بارگذاری)
+        loadingOverlay.classList.remove('hidden');
 
-  function showPage(pageId) {
-    [loginPage, searchPage, dashboardPage].forEach(p => p.classList.add('hidden'));
-    document.getElementById(pageId).classList.remove('hidden');
-  }
+        // شبیه‌سازی تأخیر در اتصال به سرور
+        setTimeout(() => {
+            loadingOverlay.classList.add('hidden');
+            
+            if (username === MOCK_USER.username && password === MOCK_USER.password && ceu === MOCK_USER.ceu) {
+                // لاگین موفق: تغییر صفحه
+                loginPage.classList.add('hidden');
+                dashboardLayout.classList.remove('hidden');
+                loginError.classList.add('hidden');
+                
+                // بارگذاری محتوای اولیه
+                loadDashboardContent('application-form-btn');
 
-  function showLoading() { loadingOverlay.classList.remove('hidden'); }
-  function hideLoading() { loadingOverlay.classList.add('hidden'); }
+            } else {
+                // لاگین ناموفق
+                loginError.classList.remove('hidden');
+            }
+        }, 2000); // تأخیر ۲ ثانیه‌ای برای انیمیشن ورود
+    });
 
-  function clearForms() {
-    document.querySelectorAll('form').forEach(f => f.reset());
-  }
+    // === مدیریت خروج ===
+    logoutBtn.addEventListener('click', function() {
+        // نمایش انیمیشن خروج
+        loadingOverlay.classList.remove('hidden');
 
-  // جلوگیری از بازگشت با back
-  history.pushState(null, null, location.href);
-  window.onpopstate = () => { history.go(1); };
+        setTimeout(() => {
+            loadingOverlay.classList.add('hidden');
+            
+            // بازگشت به صفحه لاگین
+            dashboardLayout.classList.add('hidden');
+            loginPage.classList.remove('hidden');
 
-  // بررسی سیشن
-  const savedUser = sessionStorage.getItem('loggedInUser');
-  if (savedUser) {
-    currentUser = JSON.parse(savedUser);
-    showPage('search-page');
-  } else {
-    showPage('login-page');
-  }
+            // ریست کردن فرم لاگین
+            loginForm.reset();
+        }, 1000); // تأخیر ۱ ثانیه‌ای برای انیمیشن خروج
+    });
 
-  // Login با ۳ فیلد
-  loginForm.addEventListener('submit', e => {
-    e.preventDefault();
-    loginError.classList.add('hidden');
+    // === مدیریت سایدبار و بارگذاری محتوا ===
+    
+    // تابع بارگذاری محتوای داینامیک
+    function loadDashboardContent(buttonId) {
+        const button = document.getElementById(buttonId);
+        const title = button.textContent.trim();
+        
+        // تنظیم عنوان بخش محتوا
+        dashboardContent.querySelector('h2').textContent = title;
 
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const ceuNumber = document.getElementById('ceu-number-login').value.trim();
+        // شبیه‌سازی محتوای هر بخش
+        let contentHTML = '';
 
-    const match = userData.find(u =>
-      u.username === username &&
-      u.password === password &&
-      u.ceuNumber === ceuNumber
-    );
+        switch(buttonId) {
+            case 'application-form-btn':
+                contentHTML = `
+                    <div class="alert-box primary"><i class="fas fa-info-circle"></i><p>Please review and verify your Type D Visa Application Form details below. Any required corrections must be submitted immediately.</p></div>
+                    <p class="content-detail">Form Status: **Completed & Ready**</p>
+                    <p class="content-detail">Review Date: 2025-09-01</p>
+                    <button class="official-button" style="width: auto;"><i class="fas fa-eye"></i> View/Print Form</button>
+                `;
+                break;
+            case 'appointment-details-btn':
+                contentHTML = `
+                    <div class="alert-box success"><i class="fas fa-calendar-check"></i><p>Your interview is **Confirmed** by the Embassy of Italy in Tehran. Please ensure punctual attendance.</p></div>
+                    <p class="content-detail">Date: **20 October 2025**</p>
+                    <p class="content-detail">Time: 10:30 AM</p>
+                    <p class="content-detail">Location: Embassy of Italy - Tehran</p>
+                    <button class="official-button" style="width: auto;"><i class="fas fa-print"></i> Print Confirmation Letter</button>
+                `;
+                break;
+            case 'payment-confirm-btn':
+                contentHTML = `
+                    <div class="alert-box primary"><i class="fas fa-euro-sign"></i><p>The **EUR 230** processing fee is mandatory. Upload your international bank receipt below.</p></div>
+                    <form><label for="payment-upload">Upload Receipt (PDF/JPG):</label><input type="file" id="payment-upload" required><button type="submit" class="official-button" style="width: auto; margin-left: 10px;">Upload</button></form>
+                    <p class="content-detail" style="margin-top: 15px;">Payment Status: **Awaiting Receipt Upload**</p>
+                `;
+                break;
+            case 'final-result-btn':
+                contentHTML = `
+                    <div class="alert-box danger"><i class="fas fa-times-circle"></i><p>The final decision on your humanitarian visa application is **PENDING REVIEW** by the Consular Section. Check back regularly.</p></div>
+                    <p class="content-detail">Estimated Completion: Varies (Min. 30 days post-interview)</p>
+                `;
+                break;
+            default:
+                contentHTML = `
+                    <div class="alert-box primary"><i class="fas fa-file-upload"></i><p>This is the upload area for **${title}**. Please use high-resolution PDF files only.</p></div>
+                    <form><label for="doc-upload">Select File:</label><input type="file" id="doc-upload" required><button type="submit" class="official-button" style="width: auto; margin-left: 10px;">Submit Document</button></form>
+                `;
+                break;
+        }
 
-    showLoading();
-    setTimeout(() => {
-      hideLoading();
-      if (match) {
-        currentUser = match;
-        sessionStorage.setItem('loggedInUser', JSON.stringify(match));
-        clearForms();
-        showPage('search-page');
-        resetInactivityTimer();
-      } else {
-        loginError.classList.remove('hidden');
-      }
-    }, 2000);
-  });
-
-  // Search form
-  searchForm.addEventListener('input', () => {
-    const required = ['search-name','search-lastname','search-nationality','search-national-id','search-ceu','search-gender']
-      .map(id => document.getElementById(id).value.trim() !== "");
-    trackButton.disabled = !required.every(Boolean);
-  });
-
-  searchForm.addEventListener('submit', e => {
-    e.preventDefault();
-    searchError.classList.add('hidden');
-
-    if (!currentUser) {
-      showPage('login-page');
-      return;
+        // جایگذاری محتوای جدید
+        contentPlaceholder.innerHTML = contentHTML;
     }
 
-    const data = {
-      name: document.getElementById('search-name').value.trim(),
-      lastname: document.getElementById('search-lastname').value.trim(),
-      nationality: document.getElementById('search-nationality').value.trim(),
-      passportNumber: document.getElementById('search-passport').value.trim(),
-      nationalIDNumber: document.getElementById('search-national-id').value.trim(),
-      ceuNumber: document.getElementById('search-ceu').value.trim(),
-      gender: document.getElementById('search-gender').value.trim()
-    };
+    // اضافه کردن شنونده رویداد به دکمه‌های سایدبار
+    sidebarButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // انیمیشن شبیه‌سازی بارگذاری محتوا
+            loadingOverlay.classList.remove('hidden');
+            
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                
+                // مدیریت کلاس active (انتخاب دکمه)
+                sidebarButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // بارگذاری محتوا
+                loadDashboardContent(this.id);
 
-    const match = userData.find(u =>
-      u.name.toLowerCase() === data.name.toLowerCase() &&
-      u.lastname.toLowerCase() === data.lastname.toLowerCase() &&
-      u.nationality.toLowerCase() === data.nationality.toLowerCase() &&
-      u.nationalIDNumber === data.nationalIDNumber &&
-      u.ceuNumber === data.ceuNumber &&
-      u.gender.toLowerCase() === data.gender.toLowerCase() &&
-      (data.passportNumber === "" || u.passportNumber === data.passportNumber)
-    );
-
-    showLoading();
-    setTimeout(() => {
-      hideLoading();
-      if (match && match.username === currentUser.username) {
-        showPage('dashboard-page');
-        setupUserButtons(match);
-        resetInactivityTimer();
-      } else {
-        searchError.classList.remove('hidden');
-      }
-    }, 2000);
-  });
-
-  function setupUserButtons(user) {
-    const btns = {
-      finalResult: document.getElementById('final-result-btn'),
-      uploadPassport: document.getElementById('upload-passport-btn'),
-      uploadDocuments: document.getElementById('upload-docs-btn'),
-      unhcrLetter: document.getElementById('unhcr-letter-btn'),
-      uploadFinger: document.getElementById('upload-finger-btn'),
-    };
-    Object.keys(btns).forEach(k => {
-      if (user.links && user.links[k]) {
-        btns[k].onclick = () => window.open(user.links[k], '_self');
-      }
+            }, 500); // تأخیر ۰.۵ ثانیه‌ای برای انیمیشن بارگذاری محتوا
+        });
     });
-  }
-
-  // Logout
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      showLoading();
-      setTimeout(() => {
-        sessionStorage.removeItem('loggedInUser');
-        currentUser = null;
-        clearForms();
-        hideLoading();
-        showPage('login-page');
-      }, 1000);
-    });
-  }
-
-  // Auto logout پس از 2 دقیقه inactivity
-  let inactivityTimer;
-  function resetInactivityTimer() {
-    clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(() => {
-      if(currentUser) {
-        alert('You have been logged out due to inactivity.');
-        logoutBtn.click();
-      }
-    }, 120000); // 120 ثانیه
-  }
-
-  // Reset timer on any action
-  ['click','mousemove','keydown','scroll'].forEach(evt => {
-    document.addEventListener(evt, resetInactivityTimer);
-  });
-
 });
