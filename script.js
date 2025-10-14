@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Google Sheet CSV Link ---
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQmwyY9o-_Uupjvr1i_f8bVWr8g87FxkZLKeDeIxAHmXlNFP4q6uhx7yCcJv9z-lZq8NZ4EYL6OgUul/pub?gid=0&single=true&output=csv';
 
     let currentUser = null;
+    let step1User = null;
 
     // --- DOM elements ---
     const loginForm = document.getElementById('login-form');
+    const loginStep2 = document.getElementById('login-step2');
+    const step2Error = document.getElementById('step2-error');
     const logoutBtn = document.getElementById('logout-btn');
     const loadingOverlay = document.getElementById('loading-overlay');
     const loginPage = document.getElementById('login-page');
@@ -22,9 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBarFill = document.getElementById('progress-bar-fill');
     const progressPercentage = document.getElementById('progress-percentage');
     const progressMessage = document.getElementById('progress-message');
-    const signupMessageBox = document.getElementById('signup-message-box');
-    const signupBtn = document.getElementById('signup-btn');
-    const backToLoginBtn = document.getElementById('back-to-login-btn');
 
     // === Sidebar Info Update ===
     function updateSidebarInfo() {
@@ -74,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         progressMessage.textContent = message;
     }
 
-    // === LOGIN ===
+    // === LOGIN STEP 1 ===
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('username').value.trim().toUpperCase();
@@ -101,22 +100,16 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (matchedRow) {
-                currentUser = {};
-                headers.forEach((h, i) => currentUser[h] = matchedRow[i]?.trim());
+                step1User = {};
+                headers.forEach((h, i) => step1User[h] = matchedRow[i]?.trim());
 
-                updateSidebarInfo();
-                loginPage.classList.add('hidden');
-                dashboardLayout.classList.remove('hidden');
-
-                const progress = calculateProgress(currentUser);
-                updateProgressUI(progress);
-
-                // ✅ نکته مهم: شروع تایمر بعد از لاگین موفق
-                startInactivityTimer();
-
+                // مرحله اول درست → فرم دوم باز شود
+                loginForm.classList.add('hidden');
+                loginStep2.classList.remove('hidden');
             } else {
                 loginError.classList.remove('hidden');
             }
+
         } catch (err) {
             console.error('Error fetching Google Sheet:', err);
             loginError.textContent = 'Error connecting to server.';
@@ -126,58 +119,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // === LOGOUT ===
-    logoutBtn.addEventListener('click', () => {
-        loadingOverlay.classList.remove('hidden');
-        setTimeout(() => {
-            loadingOverlay.classList.add('hidden');
-            dashboardLayout.classList.add('hidden');
-            loginPage.classList.remove('hidden');
-            loginForm.reset();
-            loginError.classList.add('hidden');
-            currentUser = null;
-            progressContainer.classList.add('hidden');
-            sidebarButtons.forEach(btn => btn.classList.remove('active'));
-        }, 1000);
-    });
+    // === LOGIN STEP 2 ===
+    loginStep2.addEventListener('submit', (e) => {
+        e.preventDefault();
+        step2Error.classList.add('hidden');
 
-    // === SIGNUP MESSAGE TOGGLE ===
-    if (signupBtn && backToLoginBtn) {
-        signupBtn.addEventListener('click', () => {
-            loginForm.classList.add('hidden');
-            signupMessageBox.classList.remove('hidden');
-        });
-        backToLoginBtn.addEventListener('click', () => {
-            signupMessageBox.classList.add('hidden');
-            loginForm.classList.remove('hidden');
-        });
-    }
+        const fields = ['name', 'lastname', 'dob', 'nationality', 'passportNumber', 'nationalIDNumber', 'gender'];
 
-    // === DASHBOARD BUTTON LOGIC ===
-    function loadDashboardContent(buttonId) {
-        if (!currentUser) return;
-        const button = document.getElementById(buttonId);
-        const title = button.textContent.trim();
-        dashboardContent.querySelector('h2').textContent = title;
-        contentPlaceholder.innerHTML = `<p>Loading data for <strong>${title}</strong>...</p>`;
-    }
+        let allMatch = true;
+        for (let f of fields) {
+            const userValue = document.getElementById(f).value.trim().toUpperCase();
+            const sheetValue = (step1User[f === 'dob' ? 'Date of birth' : f]?.trim() || '').toUpperCase();
+            if (userValue !== sheetValue) {
+                allMatch = false;
+                break;
+            }
+        }
 
-    sidebarButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            if (!currentUser) return;
-            loadingOverlay.classList.remove('hidden');
-            setTimeout(() => {
-                loadingOverlay.classList.add('hidden');
-                sidebarButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                loadDashboardContent(this.id);
-            }, 500);
-        });
+        if (!allMatch) {
+            step2Error.classList.remove('hidden');
+            return;
+        }
+
+        // همه فیلدها درست بود → ورود به داشبورد
+        currentUser = step1User;
+        loginStep2.classList.add('hidden');
+        dashboardLayout.classList.remove('hidden');
+        updateSidebarInfo();
+
+        const progress = calculateProgress(currentUser);
+        updateProgressUI(progress);
+        startInactivityTimer();
     });
 
     // === AUTO LOGOUT AFTER INACTIVITY ===
     let inactivityTimer;
-    const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 دقیقه (بر حسب میلی‌ثانیه)
+    const INACTIVITY_LIMIT = 5 * 60 * 1000;
 
     function resetInactivityTimer() {
         clearTimeout(inactivityTimer);
@@ -196,9 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function performLogout() {
         dashboardLayout.classList.add('hidden');
         loginPage.classList.remove('hidden');
+        loginForm.classList.remove('hidden');
+        loginStep2.classList.add('hidden');
         loginForm.reset();
+        loginStep2.reset();
         loginError.classList.add('hidden');
+        step2Error.classList.add('hidden');
         currentUser = null;
+        step1User = null;
         progressContainer.classList.add('hidden');
         sidebarButtons.forEach(btn => btn.classList.remove('active'));
     }
@@ -206,4 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function startInactivityTimer() {
         resetInactivityTimer();
     }
+
+    logoutBtn.addEventListener('click', performLogout);
 });
