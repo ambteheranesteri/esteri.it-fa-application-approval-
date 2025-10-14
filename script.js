@@ -130,7 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
             loginError.classList.remove('hidden');
             return;
         }
-
+        
+        // Headers used in Step 1 (username, password, ceuNumber) match the sheet headers.
         const username = normalize(document.getElementById('username').value);
         const password = normalize(document.getElementById('password').value);
         const ceuNumber = normalize(document.getElementById('ceu-number-login').value);
@@ -194,7 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get column indices
         const nameIndex = csvData.headers.indexOf('name');
         const lastnameIndex = csvData.headers.indexOf('lastname');
-        const dobIndex = csvData.headers.indexOf('dateOfBirth');
+        // 👇👇 اصلاح شده: برای مطابقت دقیق با ستون شیت شما ("Date of birth")
+        const dobIndex = csvData.headers.indexOf('Date of birth'); 
+        // 👆👆 اصلاح شده
         const nationalityIndex = csvData.headers.indexOf('nationality');
         const passportIndex = csvData.headers.indexOf('passportNumber');
         const nationalIDIndex = csvData.headers.indexOf('nationalIDNumber');
@@ -213,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // because the field is optional for the user.
              dobMatch = true;
         }
-        // If both are empty, dobMatch is true (initial value)
         // --------------------------------------------------
 
         // Final Validation
