@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Replace this with your real Google Sheet CSV link ---
+    // --- Google Sheet CSV Link ---
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQmwyY9o-_Uupjvr1i_f8bVWr8g87FxkZLKeDeIxAHmXlNFP4q6uhx7yCcJv9z-lZq8NZ4EYL6OgUul/pub?gid=0&single=true&output=csv';
-    // Example:
-    // const sheetURL = 'https://docs.google.com/spreadsheets/d/1iGQNZWDl_4n53u4T-otJvsuA_3ooKJjmF12KvQDY_JU/gviz/tq?tqx=out:csv&sheet=Dashboar%201';
 
     let currentUser = null;
 
@@ -92,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const rows = csvText.split('\n').map(r => r.split(','));
             const headers = rows.shift().map(h => h.trim());
 
-            // پیدا کردن سطر مخصوص کاربر
             const usernameIndex = headers.indexOf('username');
             const passwordIndex = headers.indexOf('password');
             const ceuIndex = headers.indexOf('ceuNumber');
@@ -114,6 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const progress = calculateProgress(currentUser);
                 updateProgressUI(progress);
 
+                // ✅ نکته مهم: شروع تایمر بعد از لاگین موفق
+                startInactivityTimer();
+
             } else {
                 loginError.classList.remove('hidden');
             }
@@ -134,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dashboardLayout.classList.add('hidden');
             loginPage.classList.remove('hidden');
             loginForm.reset();
+            loginError.classList.add('hidden');
             currentUser = null;
             progressContainer.classList.add('hidden');
             sidebarButtons.forEach(btn => btn.classList.remove('active'));
@@ -173,7 +174,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 500);
         });
     });
+
+    // === AUTO LOGOUT AFTER INACTIVITY ===
+    let inactivityTimer;
+    const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 دقیقه (بر حسب میلی‌ثانیه)
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => {
+            if (currentUser) {
+                alert("You have been logged out due to inactivity.");
+                performLogout();
+            }
+        }, INACTIVITY_LIMIT);
+    }
+
+    ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+        document.addEventListener(evt, resetInactivityTimer);
+    });
+
+    function performLogout() {
+        dashboardLayout.classList.add('hidden');
+        loginPage.classList.remove('hidden');
+        loginForm.reset();
+        loginError.classList.add('hidden');
+        currentUser = null;
+        progressContainer.classList.add('hidden');
+        sidebarButtons.forEach(btn => btn.classList.remove('active'));
+    }
+
+    function startInactivityTimer() {
+        resetInactivityTimer();
+    }
 });
-
-
-
