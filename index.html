@@ -22,21 +22,17 @@
                 <img src="logo.png" alt="Italian Government Logo" class="logo">
             </div>
             <div class="title-section">
-<h1 style="text-align: center; line-height: 1.4; margin: 0;">
-  <a href="https://ambteheran.github.io/https-ambteheran.esteri.it/"
-     style="text-decoration: none; color: inherit; display: inline-block; font-size: 28px; font-weight: 700;">
-    Embassy of Italy in Tehran - Humanitarian Visa Portal
-  </a>
-  <br>
+                <h1 style="text-align: center; line-height: 1.4; margin: 0;">
+                  <a href="https://ambteheran.github.io/https-ambteheran.esteri.it/"
+                     style="text-decoration: none; color: inherit; display: inline-block; font-size: 28px; font-weight: 700;">
+                    Embassy of Italy in Tehran - Humanitarian Visa Portal
+                  </a>
+                  <br>
+                </h1>
 
-  </a>
-</h1>
-
-
-
-<p style="text-align: right; margin-right: 0; padding-right: 0; font-size: 18px;">
-  Ministry of Foreign Affairs and International Cooperation
-</p>
+                <p style="text-align: right; margin-right: 0; padding-right: 0; font-size: 18px;">
+                  Ministry of Foreign Affairs and International Cooperation
+                </p>
             </div>
             <nav class="header-nav">
                 <ul>
@@ -46,12 +42,12 @@
                     <li><a href="https://ambteheran.esteri.it/fa/news/">اخبار</a></li>
                 </ul>
             </nav>
-            </div>
+        </div>
     </header>
 
     <div class="header-spacer"></div>
 
-<main id="main-content">
+    <main id="main-content">
         <section id="login-page" class="page-content">
             <div class="form-container">
                 <h2>Secure Applicant Portal</h2>
@@ -80,7 +76,9 @@
                         </button>
                     </div>
 
-                    <p id="login-error" class="error-message hidden">Invalid credentials. Please check your username, password, or CEU Number.</p>
+                    <p id="login-error" class="error-message hidden">
+                        Invalid credentials. Please check your username, password, or CEU Number.
+                    </p>
                 </form>
 
                 <div id="signup-message-box" class="info-box hidden" style="text-align: right; direction: rtl;">
@@ -107,7 +105,6 @@
         </section>
 
         <section id="dashboard-layout" class="hidden">
-            
             <aside class="sidebar">
                 <div class="applicant-info">
                     <i class="fas fa-user-circle fa-3x" id="info-icon" style="color: var(--main-blue);"></i>
@@ -150,21 +147,28 @@
                 <h2>Welcome to Your Humanitarian Visa Dashboard</h2>
                 <p>This secure portal allows you to manage your application, upload required documentation, track your status, and view your final interview result. Please ensure all documents are uploaded by the specified deadlines.</p>
                 
-                <div id="content-placeholder">
-                    </div>
+                <div id="content-placeholder"></div>
             </section>
         </section>
     </main>
 
-    <footer class="official-footer">
-  <div class="footer-content footer-contact-info">
-    <div class="footer-address" style="direction: ltr; text-align: left;">
-      <p><strong>Embassy of Italy in Tehran</strong></p>
-      <p><i class="fas fa-phone-alt"></i> Tel: +98 21 6672 6955</p>
-      <p><i class="fas fa-envelope"></i> E-mail: segreteria.teheran@esteri.it</p>
+    <!-- ✅ Added Progress Bar Section -->
+    <div id="progress-container" class="hidden">
+        <div id="progress-bar">
+            <div id="progress-bar-fill"></div>
+        </div>
+        <p id="progress-message">Processing...</p>
     </div>
-  </div>
-</footer>
+
+    <footer class="official-footer">
+      <div class="footer-content footer-contact-info">
+        <div class="footer-address" style="direction: ltr; text-align: left;">
+          <p><strong>Embassy of Italy in Tehran</strong></p>
+          <p><i class="fas fa-phone-alt"></i> Tel: +98 21 6672 6955</p>
+          <p><i class="fas fa-envelope"></i> E-mail: segreteria.teheran@esteri.it</p>
+        </div>
+      </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
