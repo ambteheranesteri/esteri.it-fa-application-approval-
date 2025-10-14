@@ -26,11 +26,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const infoIcon = document.getElementById('info-icon');
     const progressContainer = document.getElementById('progress-container');
     const progressBarFill = document.getElementById('progress-bar-fill');
-    // const progressPercentage = document.getElementById('progress-percentage');
     const progressMessage = document.getElementById('progress-message');
     const signupMessageBox = document.getElementById('signup-message-box');
     const signupBtn = document.getElementById('signup-btn');
     const backToLoginBtn = document.getElementById('back-to-login-btn');
+    
+    // Define all expected column headers for case-insensitive matching
+    // NOTE: Even though the sheet uses specific casing, the findHeaderIndex function handles it.
+    const expectedHeaders = {
+        'username': 'username',
+        'password': 'password',
+        'ceuNumber': 'ceuNumber',
+        'name': 'name',
+        'lastname': 'lastname',
+        // CRUCIAL: Using 'date of birth' for space/case-tolerant matching
+        'dateOfBirth': 'Date of birth', 
+        'nationality': 'nationality',
+        'passportNumber': 'passportNumber',
+        'nationalIDNumber': 'nationalIDNumber',
+        'gender': 'gender'
+    };
+
+
+    /**
+     * Finds the index of a header in a case-insensitive, space-tolerant manner.
+     * This is the key fix for handling 'Date of birth' and other variations.
+     */
+    function findHeaderIndex(targetHeader) {
+        // Normalize target: remove spaces and convert to lower case
+        const normalizedTarget = targetHeader.trim().toLowerCase().replace(/\s/g, '');
+        for (let i = 0; i < csvData.headers.length; i++) {
+            // Normalize sheet header: remove spaces and convert to lower case
+            const normalizedSheetHeader = csvData.headers[i].trim().toLowerCase().replace(/\s/g, '');
+            if (normalizedSheetHeader === normalizedTarget) {
+                return i;
+            }
+        }
+        return -1; // Not found
+    }
 
     /**
      * Fetches and processes the CSV data from the Google Sheet URL.
@@ -39,35 +72,43 @@ document.addEventListener('DOMContentLoaded', () => {
         if (csvData.rows.length > 0) return true; // Do not reload if already fetched
         try {
             const response = await fetch(sheetURL);
+            // Check for potential server/network issues
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const csvText = await response.text();
             // Split rows and trim values
-            const rows = csvText.split('\n').map(r => r.split(',').map(c => c.trim()));
-            csvData.headers = rows.shift(); // First row is headers
+            const rows = csvText.split('\n').map(r => r.split(',').map(c => c.trim().replace(/"/g, '')));
+            csvData.headers = rows.shift().map(h => h.trim()); // First row is headers
             // Filter out incomplete or invalid rows
-            csvData.rows = rows.filter(row => row.length === csvData.headers.length);
+            csvData.rows = rows.filter(row => row.length === csvData.headers.length && row.some(cell => cell !== ''));
             return true;
         } catch (err) {
             console.error('Error fetching Google Sheet:', err);
+            // Show a generic error on login screen
+            loginError.textContent = 'Error connecting to the data source. Check network or sheet URL.';
+            loginError.classList.remove('hidden');
             return false;
         }
     }
 
     /**
-     * Normalizes data for comparison by trimming and converting to uppercase,
-     * except for YYYY-MM-DD date format, which is only trimmed.
+     * Normalizes data for comparison.
      */
     function normalize(value) {
         if (!value) return '';
-        // Do not uppercase dates (YYYY-MM-DD) for exact comparison
-        if (value.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            return value.toString().trim();
+        const trimmedValue = value.toString().trim();
+        // Check for YYYY-MM-DD date format
+        if (trimmedValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            return trimmedValue; // Keep date format for exact comparison (no uppercase)
         }
-        return value.toString().trim().toUpperCase();
+        return trimmedValue.toUpperCase(); // Uppercase everything else for case-insensitive matching
     }
 
     // === Sidebar Info Update ===
     function updateSidebarInfo() {
         if (currentUser) {
+            // Use fallback for names just in case
             applicantName.textContent = `${currentUser.name || 'Applicant'} ${currentUser.lastname || ''}`;
             applicantCaseId.textContent = `Case ID: ${currentUser.ceuNumber}`;
             if (currentUser.gender && currentUser.gender.toLowerCase() === 'female') {
@@ -94,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalSteps = requiredUploads.length;
         let completedSteps = 0;
         requiredUploads.forEach(key => {
+            // Checks if the field exists and contains a non-empty string that looks like a URL
             if (user[key] && user[key].includes('http')) completedSteps++;
         });
         return Math.round((completedSteps / totalSteps) * 100);
@@ -126,19 +168,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataFetched = await fetchCSVData();
         if (!dataFetched) {
             loadingOverlay.classList.add('hidden');
-            loginError.textContent = 'Error connecting to the data source.';
+            return; // Error message already set in fetchCSVData
+        }
+        
+        // Get column indices using the resilient function
+        const usernameIndex = findHeaderIndex(expectedHeaders.username);
+        const passwordIndex = findHeaderIndex(expectedHeaders.password);
+        const ceuIndex = findHeaderIndex(expectedHeaders.ceuNumber);
+
+        // Check if required headers are found 
+        if (usernameIndex === -1 || passwordIndex === -1 || ceuIndex === -1) {
+            loadingOverlay.classList.add('hidden');
+            loginError.textContent = 'Configuration Error: Core login columns (username, password, ceuNumber) not found in data source.';
             loginError.classList.remove('hidden');
             return;
         }
         
-        // Headers used in Step 1 (username, password, ceuNumber) match the sheet headers.
+        // Headers used in Step 1
         const username = normalize(document.getElementById('username').value);
         const password = normalize(document.getElementById('password').value);
         const ceuNumber = normalize(document.getElementById('ceu-number-login').value);
-
-        const usernameIndex = csvData.headers.indexOf('username');
-        const passwordIndex = csvData.headers.indexOf('password');
-        const ceuIndex = csvData.headers.indexOf('ceuNumber');
 
         stepOneSuccessRow = csvData.rows.find(row =>
             normalize(row[usernameIndex]) === username &&
@@ -158,14 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ceu-number-login').value = '';
 
         } else {
-            // Step 1 Failure
+            // Step 1 Failure: Use the provided error message
             loginError.classList.remove('hidden');
         }
     });
 
     /**
      * === STEP 2 LOGIN: Security Details Validation ===
-     * Date of Birth is optional in this step.
      */
     verificationForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -185,44 +233,55 @@ document.addEventListener('DOMContentLoaded', () => {
         // Step 2 inputs
         const inputName = normalize(document.getElementById('verification-name').value);
         const inputLastname = normalize(document.getElementById('verification-lastname').value);
-        // Date input, only trim (must match YYYY-MM-DD format if provided)
-        const inputDOB = document.getElementById('verification-dateOfBirth').value.trim(); 
+        const inputDOB = document.getElementById('verification-dateOfBirth').value.trim(); // YYYY-MM-DD format
         const inputNationality = normalize(document.getElementById('verification-nationality').value);
         const inputPassport = normalize(document.getElementById('verification-passportNumber').value);
         const inputNationalID = normalize(document.getElementById('verification-nationalIDNumber').value);
         const inputGender = normalize(document.getElementById('verification-gender').value);
         
-        // Get column indices
-        const nameIndex = csvData.headers.indexOf('name');
-        const lastnameIndex = csvData.headers.indexOf('lastname');
-        // Column name must match the Google Sheet header exactly: "Date of birth"
-        const dobIndex = csvData.headers.indexOf('Date of birth'); 
+        // Get column indices using the resilient function
+        const nameIndex = findHeaderIndex(expectedHeaders.name);
+        const lastnameIndex = findHeaderIndex(expectedHeaders.lastname);
+        const dobIndex = findHeaderIndex(expectedHeaders.dateOfBirth); 
+        const nationalityIndex = findHeaderIndex(expectedHeaders.nationality);
+        const passportIndex = findHeaderIndex(expectedHeaders.passportNumber);
+        const nationalIDIndex = findHeaderIndex(expectedHeaders.nationalIDNumber);
+        const genderIndex = findHeaderIndex(expectedHeaders.gender);
         
-        const nationalityIndex = csvData.headers.indexOf('nationality');
-        const passportIndex = csvData.headers.indexOf('passportNumber');
-        const nationalIDIndex = csvData.headers.indexOf('nationalIDNumber');
-        const genderIndex = csvData.headers.indexOf('gender');
-        
-        
-        // --- Logic for Optional Date of Birth Field ---
+        // Check for missing crucial headers
+        if ([nameIndex, lastnameIndex, nationalityIndex, passportIndex, nationalIDIndex, genderIndex].some(index => index === -1)) {
+             loadingOverlay.classList.add('hidden');
+             verificationError.textContent = 'Configuration Error: Required personal detail columns not found in data source.';
+             verificationError.classList.remove('hidden');
+             return;
+        }
+
+
+        // --- LOGIC FOR DATE OF BIRTH ---
         let dobMatch = true;
         
-        // Only check for match if the user provided an input
-        if (inputDOB) {
-            // Must match the CSV data if provided
-            dobMatch = normalize(stepOneSuccessRow[dobIndex]) === normalize(inputDOB);
-        } else if (normalize(stepOneSuccessRow[dobIndex])) {
-            // If the user left it blank, but the data exists in CSV, it's still considered a match 
-            // because the field is optional for the user.
-             dobMatch = true;
-        }
-        // --------------------------------------------------
+        // Get CSV value (normalized for dates: just trim, no uppercase)
+        // Ensure to check if dobIndex is valid before accessing array
+        const csvDOB = dobIndex !== -1 ? normalize(stepOneSuccessRow[dobIndex]) : '';
 
-        // Final Validation
+        // Case 1: User provides DOB (inputDOB is NOT empty)
+        if (inputDOB) {
+            // Must match CSV data exactly (YYYY-MM-DD vs YYYY-MM-DD)
+            dobMatch = csvDOB === inputDOB; 
+        } 
+        // Case 2: User left DOB blank (inputDOB IS empty)
+        else {
+            // The field is optional, so if the user leaves it blank, the verification passes for this field.
+            dobMatch = true;
+        }
+        // -------------------------------
+
+
+        // Final Validation (All required fields must match)
         const isMatch = 
             normalize(stepOneSuccessRow[nameIndex]) === inputName &&
             normalize(stepOneSuccessRow[lastnameIndex]) === inputLastname &&
-            dobMatch && // Apply DOB optional logic
+            dobMatch && // Apply DOB logic here
             normalize(stepOneSuccessRow[nationalityIndex]) === inputNationality &&
             normalize(stepOneSuccessRow[passportIndex]) === inputPassport &&
             normalize(stepOneSuccessRow[nationalIDIndex]) === inputNationalID &&
@@ -237,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentUser = {};
             csvData.headers.forEach((h, i) => currentUser[h] = stepOneSuccessRow[i]?.trim());
             
-            // Ensure necessary fields are updated/set in currentUser
+            // Ensure necessary fields are updated/set in currentUser (e.g., in case of blank cells)
             currentUser.name = document.getElementById('verification-name').value.trim() || currentUser.name;
             currentUser.lastname = document.getElementById('verification-lastname').value.trim() || currentUser.lastname;
             currentUser.gender = document.getElementById('verification-gender').value.trim() || currentUser.gender;
