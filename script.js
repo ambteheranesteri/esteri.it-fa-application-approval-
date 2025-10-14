@@ -1,174 +1,385 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <title>Italian Humanitarian Visa Management System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Google Sheet CSV Link ---
+    // This URL is used to fetch user data for login.
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQmwyY9o-_Uupjvr1i_f8bVWr8g87FxkZLKeDeIxAHmXlNFP4q6uhx7yCcJv9z-lZq8NZ4EYL6OgUul/pub?gid=0&single=true&output=csv';
+
+    // --- Global State ---
+    let currentUser = null; // User data after successful login
+    let csvData = { headers: [], rows: [] }; // Stores fetched CSV data
+
+    // --- DOM elements ---
+    const loginForm = document.getElementById('login-form');
+    // NOTE: verificationForm element is no longer used
+    const logoutBtn = document.getElementById('logout-btn');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loginPage = document.getElementById('login-page');
+    const dashboardLayout = document.getElementById('dashboard-layout');
+    const loginError = document.getElementById('login-error');
+    // NOTE: verificationError element is no longer used
+    const dashboardContent = document.querySelector('.dashboard-content');
+    const contentPlaceholder = document.getElementById('content-placeholder');
+    // انتخاب دکمه‌ها و لینک‌های داشبورد
+    const sidebarButtons = document.querySelectorAll('.dashboard-button');
+    const applicantName = document.getElementById('applicant-name');
+    const applicantCaseId = document.getElementById('applicant-case-id');
+    const infoIcon = document.getElementById('info-icon');
+    const progressContainer = document.getElementById('progress-container');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressMessage = document.getElementById('progress-message');
+    const signupMessageBox = document.getElementById('signup-message-box');
+    const signupBtn = document.getElementById('signup-btn');
+    const backToLoginBtn = document.getElementById('back-to-login-btn');
     
-    <div id="loading-overlay" class="hidden">
-        <div class="loading-spinner">
-            <img src="loading.gif" alt="Processing..." id="loading-gif">
-        </div>
-    </div>
+    // Define expected column headers for resilient matching
+    const expectedHeaders = {
+        'username': 'username',
+        'password': 'password',
+        'ceuNumber': 'ceuNumber',
+        'name': 'name',
+        'lastname': 'lastname',
+        'gender': 'gender',
+        // Keeping these headers defined for data retrieval, even if not used in login logic anymore
+        'dateOfBirth': 'Date of birth', 
+        'nationality': 'nationality',
+        'passportNumber': 'passportNumber',
+        'nationalIDNumber': 'nationalIDNumber',
+    };
 
-    <header class="official-header fixed-header">
-        <div class="header-content">
-            <div class="logo-section">
-                <img src="logo.png" alt="Italian Government Logo" class="logo">
-            </div>
-            <div class="title-section">
-                <h1 style="text-align: center; line-height: 1.4; margin: 0;">
-                    <a href="#"
-                       style="text-decoration: none; color: inherit; display: block; font-size: 28px; font-weight: 700; text-align: left;">
-                        Embassy of Italy in Tehran - Humanitarian Visa Portal
-                    </a>
-                    <br>
-                </h1>
 
-                <p style="text-align: center; margin-right: 0; padding-right: 0; font-size: 18px;">
-                    Ministry of Foreign Affairs and International Cooperation
-                </p>
-            </div>
-            <nav class="header-nav">
-                <ul>
-                    <li><a href="https://ambteheran.esteri.it/fa/chi-siamo/">ما که هستیم</a></li>
-                    <li><a href="https://ambteheran.esteri.it/fa/italia-e-iran/">ایتالیا و ایران</a></li>
-                    <li><a href="https://ambteheran.esteri.it/fa/servizi-consolari-e-visti/">خدمات کنسولی و ویزا</a></li>
-                    <li><a href="https://ambteheran.esteri.it/fa/news/">اخبار</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    /**
+     * Finds the index of a header in a case-insensitive, space-tolerant manner.
+     */
+    function findHeaderIndex(targetHeader) {
+        const normalizedTarget = targetHeader.trim().toLowerCase().replace(/\s/g, '');
+        for (let i = 0; i < csvData.headers.length; i++) {
+            const normalizedSheetHeader = csvData.headers[i].trim().toLowerCase().replace(/\s/g, '');
+            if (normalizedSheetHeader === normalizedTarget) {
+                return i;
+            }
+        }
+        return -1; // Not found
+    }
 
-    <div class="header-spacer"></div>
+    /**
+     * Fetches and processes the CSV data from the Google Sheet URL.
+     */
+    async function fetchCSVData() {
+        if (csvData.rows.length > 0) return true; // Do not reload if already fetched
+        try {
+            const response = await fetch(sheetURL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const csvText = await response.text();
+            const rows = csvText.split('\n').map(r => r.split(',').map(c => c.trim().replace(/"/g, '')));
+            csvData.headers = rows.shift().map(h => h.trim()); 
+            csvData.rows = rows.filter(row => row.length === csvData.headers.length && row.some(cell => cell !== ''));
+            return true;
+        } catch (err) {
+            console.error('Error fetching Google Sheet:', err);
+            loginError.textContent = 'Error connecting to the data source. Check network or sheet URL.';
+            loginError.classList.remove('hidden');
+            return false;
+        }
+    }
 
-    <main id="main-content">
-        <section id="login-page" class="page-content">
-            <div class="form-container">
-                <h2>SECURE APPLICANT PORTAL</h2>
-                
-                <form id="login-form">
-                    <h3>LOG IN CEU </h3>
-                    <div class="form-group">
-                        <label for="username">Username:</label>
-                        <input type="text" id="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input type="password" id="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ceu-number-login">CEU Number:</label>
-                        <input type="text" id="ceu-number-login" required>
-                    </div>
-                    
-                    <div class="button-group" style="direction: ltr;">
-                        <button type="submit" class="official-button" id="login-submit-btn">
-                            <i class="fas fa-sign-in-alt"></i> Login
-                        </button>
-                        <button type="button" class="official-button secondary-button" id="signup-btn">
-                            <i class="fas fa-user-plus"></i> Sign Up
-                        </button>
-                    </div>
+    /**
+     * Normalizes data for comparison.
+     */
+    function normalize(value) {
+        if (!value) return '';
+        const trimmedValue = value.toString().trim();
+        // Keep date format (YYYY-MM-DD) for exact comparison
+        if (trimmedValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            return trimmedValue; 
+        }
+        return trimmedValue.toUpperCase(); // Uppercase everything else
+    }
 
-                    <p id="login-error" class="error-message hidden">
-                        YOUR APPLICATION IS CURRENTLY BEING UPDATED IN THE VISAMETRIC SYSTEM IN TEHRAN, IRAN. PLEASE TRY AGAIN AFTER 24 HOURS
-                    </p>
+    // === Sidebar Info Update ===
+    function updateSidebarInfo() {
+        if (currentUser) {
+            applicantName.textContent = `${currentUser.name || 'Applicant'} ${currentUser.lastname || ''}`;
+            applicantCaseId.textContent = `Case ID: ${currentUser.ceuNumber}`;
+            if (currentUser.gender && currentUser.gender.toLowerCase() === 'female') {
+                infoIcon.classList.remove('fa-user-circle');
+                infoIcon.classList.add('fa-user-alt');
+            } else {
+                infoIcon.classList.add('fa-user-circle');
+                infoIcon.classList.remove('fa-user-alt');
+            }
+        }
+    }
+
+    // === Progress Bar (Kept for dashboard functionality) ===
+    function calculateProgress(user) {
+        if (!user) return 0;
+        const requiredUploads = [
+            'uploadPassport',
+            'uploadIdentityDocs',
+            'uploadProofOfDanger',
+            'uploadResidenceDocs',
+            'uploadEducationJobDocs',
+            'uploadFingerprints',
+        ];
+        const totalSteps = requiredUploads.length;
+        let completedSteps = 0;
+        requiredUploads.forEach(key => {
+            if (user[key] && user[key].includes('http')) completedSteps++;
+        });
+        return Math.round((completedSteps / totalSteps) * 100);
+    }
+
+    function updateProgressUI(percentage) {
+        let message = '';
+        if (percentage === 0) message = "Login successful. Please start uploading your core documents.";
+        else if (percentage < 25) message = "Initial documentation is required.";
+        else if (percentage < 75) message = "Your file is under process.";
+        else if (percentage < 100) message = "Almost done! Awaiting embassy review.";
+        else message = "All documents uploaded. Your application is under final review.";
+
+        progressContainer.classList.remove('hidden');
+        progressBarFill.style.width = `${percentage}%`;
+        progressMessage.textContent = message;
+    }
+
+    /**
+     * === LOGIN: Single Step Credential Validation ===
+     */
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        loadingOverlay.classList.remove('hidden');
+        loginError.classList.add('hidden');
+
+        const dataFetched = await fetchCSVData();
+        if (!dataFetched) {
+            loadingOverlay.classList.add('hidden');
+            return;
+        }
+        
+        // Get column indices using the resilient function
+        const usernameIndex = findHeaderIndex(expectedHeaders.username);
+        const passwordIndex = findHeaderIndex(expectedHeaders.password);
+        const ceuIndex = findHeaderIndex(expectedHeaders.ceuNumber);
+
+        // Check if required headers are found
+        if (usernameIndex === -1 || passwordIndex === -1 || ceuIndex === -1) {
+            loadingOverlay.classList.add('hidden');
+            loginError.textContent = 'Configuration Error: Core login columns (username, password, ceuNumber) not found in data source.';
+            loginError.classList.remove('hidden');
+            return;
+        }
+        
+        // Login inputs
+        const username = normalize(document.getElementById('username').value);
+        const password = normalize(document.getElementById('password').value);
+        const ceuNumber = normalize(document.getElementById('ceu-number-login').value);
+
+        const matchedRow = csvData.rows.find(row =>
+            normalize(row[usernameIndex]) === username &&
+            normalize(row[passwordIndex]) === password &&
+            normalize(row[ceuIndex]) === ceuNumber
+        );
+
+        loadingOverlay.classList.add('hidden');
+
+        if (matchedRow) {
+            // Login Success: Direct to dashboard
+            
+            // Populate currentUser object with all row data
+            currentUser = {};
+            csvData.headers.forEach((h, i) => {
+                // Use resilient indexing for known keys to ensure data is mapped correctly
+                const key = Object.keys(expectedHeaders).find(k => findHeaderIndex(expectedHeaders[k]) === i);
+                if (key) {
+                    currentUser[expectedHeaders[key]] = matchedRow[i]?.trim();
+                } else {
+                    // Fallback for any other column in the sheet
+                    currentUser[h.toLowerCase().replace(/\s/g, '')] = matchedRow[i]?.trim();
+                }
+            });
+
+            // Ensure name fields are populated for the sidebar
+            const nameIndex = findHeaderIndex(expectedHeaders.name);
+            const lastnameIndex = findHeaderIndex(expectedHeaders.lastname);
+            const genderIndex = findHeaderIndex(expectedHeaders.gender);
+
+            currentUser.name = matchedRow[nameIndex]?.trim();
+            currentUser.lastname = matchedRow[lastnameIndex]?.trim();
+            currentUser.gender = matchedRow[genderIndex]?.trim();
+
+            updateSidebarInfo();
+            loginPage.classList.add('hidden');
+            dashboardLayout.classList.remove('hidden');
+            
+            const progress = calculateProgress(currentUser);
+            updateProgressUI(progress);
+
+            // Start timer and load initial content
+            loadDashboardContent('application-form-btn');
+            document.getElementById('application-form-btn').classList.add('active');
+            startInactivityTimer();
+
+        } else {
+            // Login Failure: Use the provided error message
+            loginError.classList.remove('hidden');
+        }
+    });
+
+    // === LOGOUT ===
+    logoutBtn.addEventListener('click', () => {
+        loadingOverlay.classList.remove('hidden');
+        setTimeout(() => {
+            performLogout();
+            loadingOverlay.classList.add('hidden');
+        }, 1000);
+    });
+
+    // === SIGNUP MESSAGE TOGGLE ===
+    if (signupBtn && backToLoginBtn) {
+        signupBtn.addEventListener('click', () => {
+            loginForm.classList.add('hidden');
+            signupMessageBox.classList.remove('hidden');
+        });
+        backToLoginBtn.addEventListener('click', () => {
+            signupMessageBox.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        });
+    }
+
+    // === DASHBOARD BUTTON LOGIC ===
+function loadDashboardContent(buttonId) {
+    if (!currentUser) return;
+
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+
+    const title = button.textContent.trim();
+    dashboardContent.querySelector('h2').textContent = title;
+
+    let html = '';
+
+    switch (buttonId) {
+        case 'application-form-btn':
+            html = `
+                <h3>Application Form</h3>
+                <form id="application-form">
+                    <label>First Name:</label><br>
+                    <input type="text" value="${currentUser.name || ''}" /><br><br>
+
+                    <label>Last Name:</label><br>
+                    <input type="text" value="${currentUser.lastname || ''}" /><br><br>
+
+                    <label>CEU Number:</label><br>
+                    <input type="text" value="${currentUser.ceuNumber || ''}" readonly /><br><br>
+
+                    <button type="button" class="official-button" id="save-application-btn">Save</button>
                 </form>
-                
-                <div id="signup-message-box" class="info-box hidden" style="text-align: left; direction: ltr;">
-                    <h3>Registration Information</h3>
-                    
- <p style="direction: ltr; text-align: left;"><strong>English:</strong> You can only create a user account through the **United Nations High Commissioner for Refugees (UNHCR)** office. To contact the UNHCR office in Iran, please send your request to the following official email addresses and phone numbers:</p>
- <div class="contact-details" style="direction: ltr; text-align: left;">
-                        <p><i class="fas fa-envelope"></i> UNHCR Reception Email (Tehran): <a href="mailto:irnteprt@unhcr.org">irnteprt@unhcr.org</a></p>
-                        <p><i class="fas fa-envelope"></i> UN Registry Email (General Registration): <a href="mailto:rcs-iranregistry@un.org">rcs-iranregistry@un.org</a></p>
-                        <p><i class="fas fa-phone"></i> Reception Tel (Tehran): +98 21 88212520 (Calling Hours: Sunday to Wednesday 8:30 to 15:30)</p>
-                        <p><i class="fas fa-phone"></i> Office Tel (Tehran):+98 21 88212520</p>
-                    </div>
-           
-                    <button type="button" class="official-button back-button" id="back-to-login-btn" style="margin-top: 20px;">
-                        <i class="fas fa-arrow-left"></i> Back to Login Page
-                    </button>
-                </div>
-            </div>
-        </section>
+                <p id="app-form-status" style="margin-top:10px;"></p>
+            `;
+            break;
 
-        <section id="dashboard-layout" class="hidden">
-            <aside class="sidebar">
-                <div class="applicant-info">
-                    <i class="fas fa-user-circle fa-3x" id="info-icon" style="color: var(--main-blue);"></i>
-                    <h3 id="applicant-name">Loading...</h3>
-                    <p id="applicant-case-id">Case ID: Loading...</p>
-                </div>
-                
-                <div class="menu-section-title">Application Submission</div>
-                 <button id="application-form-btn" class="dashboard-button active"><i class="fas fa-file-alt"></i> Application Form</button>
-                <button id="upload-passport-btn" class="dashboard-button"><i class="fas fa-passport"></i> Upload Passport</button>
-                <button id="upload-passport-btn" class="dashboard-button"><i class="fas fa-passport"></i> Upload Passport</button>
-                <button id="upload-photo-btn" class="dashboard-button"><i class="fas fa-camera"></i> Upload Photo</button>
-                <button id="upload-identity-btn" class="dashboard-button"><i class="fas fa-id-card"></i> Upload Identity Docs</button>
-                
-                <div class="menu-section-title">Supporting Evidence</div>
-                <button id="unhcr-letter-btn" class="dashboard-button"><i class="fas fa-hands-helping"></i> View UNHCR REG Letter</button>
-                <button id="upload-danger-btn" class="dashboard-button"><i class="fas fa-exclamation-triangle"></i> Upload Proof of Danger</button>
-                <button id="upload-residence-btn" class="dashboard-button"><i class="fas fa-home"></i> Upload Residence Docs</button>
-                <button id="upload-education-btn" class="dashboard-button"><i class="fas fa-graduation-cap"></i> Upload Educational/Job Docs</button>
-                
-                <div class="menu-section-title">Interview Management</div>
-                <button id="appointment-details-btn" class="dashboard-button"><i class="fas fa-calendar-alt"></i> Appointment Details</button>
-                <button id="payment-confirm-btn" class="dashboard-button"><i class="fas fa-euro-sign"></i> Payment Fee Confirmation</button>
-                <button id="upload-finger-btn" class="dashboard-button"><i class="fas fa-fingerprint"></i> Upload Finger Prints</button>
-                <button id="track-status-btn" class="dashboard-button"><i class="fas fa-cogs"></i> Track Application Status</button>
+        case 'upload-passport-btn':
+            html = `
+                <h3>Upload Passport</h3>
+                <input type="file" id="passport-file" accept=".jpg,.jpeg,.png,.pdf" /><br><br>
+                <button type="button" class="official-button" id="upload-passport">Upload</button>
+                <p id="upload-status" style="margin-top:10px;"></p>
+            `;
+            break;
 
-                <div class="menu-section-title">Final Decision</div>
-                <button id="final-checklist-btn" class="dashboard-button"><i class="fas fa-clipboard-check"></i> Final Review Checklist</button>
-                <button id="interview-guide-btn" class="dashboard-button"><i class="fas fa-book"></i> Interview Guide & FAQs</button>
-                <button id="final-result-btn" class="dashboard-button"><i class="fas fa-gavel"></i> **Final Result**</button>
-                <button id="download-visa-btn" class="dashboard-button"><i class="fas fa-file-download"></i> Download Visa Letter</button>
+        case 'upload-photo-btn':
+            html = `
+                <h3>Upload Photo</h3>
+                <input type="file" id="photo-file" accept="image/*" /><br><br>
+                <button type="button" class="official-button" id="upload-photo">Upload Photo</button>
+                <p id="photo-status" style="margin-top:10px;"></p>
+            `;
+            break;
 
-                <div style="padding: 20px;">
-                    <button id="logout-btn" class="official-button logout-button">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </div>
-            </aside>
+        default:
+            html = `<p>Loading data for <strong>${title}</strong>... This section is under development.</p>`;
+    }
 
-            <section class="dashboard-content">
-                <h2>Welcome to Your Humanitarian Visa Dashboard</h2>
-                <p>This secure portal allows you to manage your application, upload required documentation, track your status, and view your final interview result. Please ensure all documents are uploaded by the specified deadlines.</p>
-                
-                <div id="content-placeholder"></div>
-            </section>
-        </section>
-    </main>
+    contentPlaceholder.innerHTML = html;
 
-    <div id="progress-container" class="hidden">
-        <div id="progress-bar">
-            <div id="progress-bar-fill"></div>
-        </div>
-        <p id="progress-message">Processing...</p>
-    </div>
+    sidebarButtons.forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
 
-    <footer class="official-footer">
-      <div class="footer-content footer-contact-info">
-        <div class="footer-address" style="direction: ltr; text-align: left;">
-          <p><strong>Embassy of Italy in Tehran</strong></p>
-          <p><i class="fas fa-phone-alt"></i> Tel: +98 21 6672 6955</p>
-          <p><i class="fas fa-envelope"></i> E-mail: segreteria.teheran@esteri.it</p>
-        </div>
-      </div>
-    </footer>
+    // Event listeners
+    const saveBtn = document.getElementById('save-application-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            document.getElementById('app-form-status').textContent = 'Form saved (demo only).';
+        });
+    }
 
-    <script src="script.js"></script>
-</body>
-</html>
+    const passportBtn = document.getElementById('upload-passport');
+    if (passportBtn) {
+        passportBtn.addEventListener('click', () => {
+            const f = document.getElementById('passport-file');
+            document.getElementById('upload-status').textContent =
+                f && f.files.length ? 'Passport uploaded (demo).' : 'Please select a file first.';
+        });
+    }
+
+    const photoBtn = document.getElementById('upload-photo');
+    if (photoBtn) {
+        photoBtn.addEventListener('click', () => {
+            const f = document.getElementById('photo-file');
+            document.getElementById('photo-status').textContent =
+                f && f.files.length ? 'Photo uploaded (demo).' : 'Please select a file first.';
+        });
+    }
+}
 
 
+    sidebarButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault(); // prevents link default action if it's an <a> tag
+            if (!currentUser) return;
+            loadingOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                loadDashboardContent(this.id);
+            }, 500);
+        });
+    });
 
+    // === AUTO LOGOUT AFTER INACTIVITY ===
+    let inactivityTimer;
+    const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutes (in milliseconds)
 
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => {
+            if (currentUser) {
+                alert("You have been logged out due to inactivity.");
+                performLogout();
+            }
+        }, INACTIVITY_LIMIT);
+    }
+
+    ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+        document.addEventListener(evt, resetInactivityTimer);
+    });
+
+    function performLogout() {
+        dashboardLayout.classList.add('hidden');
+        loginPage.classList.remove('hidden');
+        loginForm.reset();
+        
+        loginError.classList.add('hidden');
+
+        currentUser = null;
+        
+        progressContainer.classList.add('hidden');
+        sidebarButtons.forEach(btn => btn.classList.remove('active'));
+    }
+
+    function startInactivityTimer() {
+        resetInactivityTimer();
+    }
+});
