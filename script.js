@@ -1,23 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Google Sheet CSV Link ---
-    // This URL is used to fetch user data for both login steps.
+    // This URL is used to fetch user data for login.
     const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQmwyY9o-_Uupjvr1i_f8bVWr8g87FxkZLKeDeIxAHmXlNFP4q6uhx7yCcJv9z-lZq8NZ4EYL6OgUul/pub?gid=0&single=true&output=csv';
 
     // --- Global State ---
-    let currentUser = null; // User data after successful final login
+    let currentUser = null; // User data after successful login
     let csvData = { headers: [], rows: [] }; // Stores fetched CSV data
-    let stepOneSuccessRow = null; // Stores the matched row data after Step 1
 
     // --- DOM elements ---
     const loginForm = document.getElementById('login-form');
-    const verificationForm = document.getElementById('verification-form'); // Step 2 form
+    // NOTE: verificationForm element is no longer used
     const logoutBtn = document.getElementById('logout-btn');
     const loadingOverlay = document.getElementById('loading-overlay');
     const loginPage = document.getElementById('login-page');
     const dashboardLayout = document.getElementById('dashboard-layout');
     const loginError = document.getElementById('login-error');
-    const verificationError = document.getElementById('verification-error'); // Step 2 error message
+    // NOTE: verificationError element is no longer used
     const dashboardContent = document.querySelector('.dashboard-content');
     const contentPlaceholder = document.getElementById('content-placeholder');
     const sidebarButtons = document.querySelectorAll('.dashboard-button');
@@ -31,32 +30,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const signupBtn = document.getElementById('signup-btn');
     const backToLoginBtn = document.getElementById('back-to-login-btn');
     
-    // Define all expected column headers for case-insensitive matching
-    // NOTE: Even though the sheet uses specific casing, the findHeaderIndex function handles it.
+    // Define expected column headers for resilient matching
     const expectedHeaders = {
         'username': 'username',
         'password': 'password',
         'ceuNumber': 'ceuNumber',
         'name': 'name',
         'lastname': 'lastname',
-        // CRUCIAL: Using 'date of birth' for space/case-tolerant matching
+        'gender': 'gender',
+        // Keeping these headers defined for data retrieval, even if not used in login logic anymore
         'dateOfBirth': 'Date of birth', 
         'nationality': 'nationality',
         'passportNumber': 'passportNumber',
         'nationalIDNumber': 'nationalIDNumber',
-        'gender': 'gender'
     };
 
 
     /**
      * Finds the index of a header in a case-insensitive, space-tolerant manner.
-     * This is the key fix for handling 'Date of birth' and other variations.
      */
     function findHeaderIndex(targetHeader) {
-        // Normalize target: remove spaces and convert to lower case
         const normalizedTarget = targetHeader.trim().toLowerCase().replace(/\s/g, '');
         for (let i = 0; i < csvData.headers.length; i++) {
-            // Normalize sheet header: remove spaces and convert to lower case
             const normalizedSheetHeader = csvData.headers[i].trim().toLowerCase().replace(/\s/g, '');
             if (normalizedSheetHeader === normalizedTarget) {
                 return i;
@@ -72,20 +67,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (csvData.rows.length > 0) return true; // Do not reload if already fetched
         try {
             const response = await fetch(sheetURL);
-            // Check for potential server/network issues
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const csvText = await response.text();
-            // Split rows and trim values
             const rows = csvText.split('\n').map(r => r.split(',').map(c => c.trim().replace(/"/g, '')));
-            csvData.headers = rows.shift().map(h => h.trim()); // First row is headers
-            // Filter out incomplete or invalid rows
+            csvData.headers = rows.shift().map(h => h.trim()); 
             csvData.rows = rows.filter(row => row.length === csvData.headers.length && row.some(cell => cell !== ''));
             return true;
         } catch (err) {
             console.error('Error fetching Google Sheet:', err);
-            // Show a generic error on login screen
             loginError.textContent = 'Error connecting to the data source. Check network or sheet URL.';
             loginError.classList.remove('hidden');
             return false;
@@ -98,17 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function normalize(value) {
         if (!value) return '';
         const trimmedValue = value.toString().trim();
-        // Check for YYYY-MM-DD date format
+        // Keep date format (YYYY-MM-DD) for exact comparison
         if (trimmedValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            return trimmedValue; // Keep date format for exact comparison (no uppercase)
+            return trimmedValue; 
         }
-        return trimmedValue.toUpperCase(); // Uppercase everything else for case-insensitive matching
+        return trimmedValue.toUpperCase(); // Uppercase everything else
     }
 
     // === Sidebar Info Update ===
     function updateSidebarInfo() {
         if (currentUser) {
-            // Use fallback for names just in case
             applicantName.textContent = `${currentUser.name || 'Applicant'} ${currentUser.lastname || ''}`;
             applicantCaseId.textContent = `Case ID: ${currentUser.ceuNumber}`;
             if (currentUser.gender && currentUser.gender.toLowerCase() === 'female') {
@@ -121,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // === Progress Bar ===
+    // === Progress Bar (Kept for dashboard functionality) ===
     function calculateProgress(user) {
         if (!user) return 0;
         const requiredUploads = [
@@ -135,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalSteps = requiredUploads.length;
         let completedSteps = 0;
         requiredUploads.forEach(key => {
-            // Checks if the field exists and contains a non-empty string that looks like a URL
             if (user[key] && user[key].includes('http')) completedSteps++;
         });
         return Math.round((completedSteps / totalSteps) * 100);
@@ -155,20 +144,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * === STEP 1 LOGIN: Initial Credential Validation ===
+     * === LOGIN: Single Step Credential Validation ===
      */
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         loadingOverlay.classList.remove('hidden');
         loginError.classList.add('hidden');
-        verificationError.classList.add('hidden');
-        loginForm.classList.remove('hidden'); 
 
         const dataFetched = await fetchCSVData();
         if (!dataFetched) {
             loadingOverlay.classList.add('hidden');
-            return; // Error message already set in fetchCSVData
+            return;
         }
         
         // Get column indices using the resilient function
@@ -176,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const passwordIndex = findHeaderIndex(expectedHeaders.password);
         const ceuIndex = findHeaderIndex(expectedHeaders.ceuNumber);
 
-        // Check if required headers are found 
+        // Check if required headers are found
         if (usernameIndex === -1 || passwordIndex === -1 || ceuIndex === -1) {
             loadingOverlay.classList.add('hidden');
             loginError.textContent = 'Configuration Error: Core login columns (username, password, ceuNumber) not found in data source.';
@@ -184,12 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Headers used in Step 1
+        // Login inputs
         const username = normalize(document.getElementById('username').value);
         const password = normalize(document.getElementById('password').value);
         const ceuNumber = normalize(document.getElementById('ceu-number-login').value);
 
-        stepOneSuccessRow = csvData.rows.find(row =>
+        const matchedRow = csvData.rows.find(row =>
             normalize(row[usernameIndex]) === username &&
             normalize(row[passwordIndex]) === password &&
             normalize(row[ceuIndex]) === ceuNumber
@@ -197,115 +184,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
         loadingOverlay.classList.add('hidden');
 
-        if (stepOneSuccessRow) {
-            // Step 1 Success: Show Step 2 form
-            loginForm.classList.add('hidden');
-            verificationForm.classList.remove('hidden');
-            // Clear Step 1 fields
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('ceu-number-login').value = '';
-
-        } else {
-            // Step 1 Failure: Use the provided error message
-            loginError.classList.remove('hidden');
-        }
-    });
-
-    /**
-     * === STEP 2 LOGIN: Security Details Validation ===
-     */
-    verificationForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        loadingOverlay.classList.remove('hidden');
-        verificationError.classList.add('hidden');
-        
-        // If no row data from Step 1, session expired or error
-        if (!stepOneSuccessRow) {
-             loadingOverlay.classList.add('hidden');
-             verificationError.textContent = 'Session expired. Please start login from Step 1.';
-             verificationError.classList.remove('hidden');
-             verificationForm.classList.add('hidden');
-             loginForm.classList.remove('hidden');
-             return;
-        }
-
-        // Step 2 inputs
-        const inputName = normalize(document.getElementById('verification-name').value);
-        const inputLastname = normalize(document.getElementById('verification-lastname').value);
-        const inputDOB = document.getElementById('verification-dateOfBirth').value.trim(); // YYYY-MM-DD format
-        const inputNationality = normalize(document.getElementById('verification-nationality').value);
-        const inputPassport = normalize(document.getElementById('verification-passportNumber').value);
-        const inputNationalID = normalize(document.getElementById('verification-nationalIDNumber').value);
-        const inputGender = normalize(document.getElementById('verification-gender').value);
-        
-        // Get column indices using the resilient function
-        const nameIndex = findHeaderIndex(expectedHeaders.name);
-        const lastnameIndex = findHeaderIndex(expectedHeaders.lastname);
-        const dobIndex = findHeaderIndex(expectedHeaders.dateOfBirth); 
-        const nationalityIndex = findHeaderIndex(expectedHeaders.nationality);
-        const passportIndex = findHeaderIndex(expectedHeaders.passportNumber);
-        const nationalIDIndex = findHeaderIndex(expectedHeaders.nationalIDNumber);
-        const genderIndex = findHeaderIndex(expectedHeaders.gender);
-        
-        // Check for missing crucial headers
-        if ([nameIndex, lastnameIndex, nationalityIndex, passportIndex, nationalIDIndex, genderIndex].some(index => index === -1)) {
-             loadingOverlay.classList.add('hidden');
-             verificationError.textContent = 'Configuration Error: Required personal detail columns not found in data source.';
-             verificationError.classList.remove('hidden');
-             return;
-        }
-
-
-        // --- LOGIC FOR DATE OF BIRTH ---
-        let dobMatch = true;
-        
-        // Get CSV value (normalized for dates: just trim, no uppercase)
-        // Ensure to check if dobIndex is valid before accessing array
-        const csvDOB = dobIndex !== -1 ? normalize(stepOneSuccessRow[dobIndex]) : '';
-
-        // Case 1: User provides DOB (inputDOB is NOT empty)
-        if (inputDOB) {
-            // Must match CSV data exactly (YYYY-MM-DD vs YYYY-MM-DD)
-            dobMatch = csvDOB === inputDOB; 
-        } 
-        // Case 2: User left DOB blank (inputDOB IS empty)
-        else {
-            // The field is optional, so if the user leaves it blank, the verification passes for this field.
-            dobMatch = true;
-        }
-        // -------------------------------
-
-
-        // Final Validation (All required fields must match)
-        const isMatch = 
-            normalize(stepOneSuccessRow[nameIndex]) === inputName &&
-            normalize(stepOneSuccessRow[lastnameIndex]) === inputLastname &&
-            dobMatch && // Apply DOB logic here
-            normalize(stepOneSuccessRow[nationalityIndex]) === inputNationality &&
-            normalize(stepOneSuccessRow[passportIndex]) === inputPassport &&
-            normalize(stepOneSuccessRow[nationalIDIndex]) === inputNationalID &&
-            normalize(stepOneSuccessRow[genderIndex]) === inputGender;
-
-        loadingOverlay.classList.add('hidden');
-
-        if (isMatch) {
-            // Step 2 Success: Final Login
+        if (matchedRow) {
+            // Login Success: Direct to dashboard
             
             // Populate currentUser object with all row data
             currentUser = {};
-            csvData.headers.forEach((h, i) => currentUser[h] = stepOneSuccessRow[i]?.trim());
-            
-            // Ensure necessary fields are updated/set in currentUser (e.g., in case of blank cells)
-            currentUser.name = document.getElementById('verification-name').value.trim() || currentUser.name;
-            currentUser.lastname = document.getElementById('verification-lastname').value.trim() || currentUser.lastname;
-            currentUser.gender = document.getElementById('verification-gender').value.trim() || currentUser.gender;
+            csvData.headers.forEach((h, i) => {
+                // Use resilient indexing for known keys to ensure data is mapped correctly
+                const key = Object.keys(expectedHeaders).find(k => findHeaderIndex(expectedHeaders[k]) === i);
+                if (key) {
+                    currentUser[expectedHeaders[key]] = matchedRow[i]?.trim();
+                } else {
+                    // Fallback for any other column in the sheet
+                    currentUser[h.toLowerCase().replace(/\s/g, '')] = matchedRow[i]?.trim();
+                }
+            });
 
+            // Ensure name fields are populated for the sidebar
+            const nameIndex = findHeaderIndex(expectedHeaders.name);
+            const lastnameIndex = findHeaderIndex(expectedHeaders.lastname);
+            const genderIndex = findHeaderIndex(expectedHeaders.gender);
+
+            currentUser.name = matchedRow[nameIndex]?.trim();
+            currentUser.lastname = matchedRow[lastnameIndex]?.trim();
+            currentUser.gender = matchedRow[genderIndex]?.trim();
 
             updateSidebarInfo();
             loginPage.classList.add('hidden');
             dashboardLayout.classList.remove('hidden');
-            verificationForm.classList.add('hidden');
             
             const progress = calculateProgress(currentUser);
             updateProgressUI(progress);
@@ -316,9 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
             startInactivityTimer();
 
         } else {
-            // Step 2 Failure
-            verificationError.textContent = 'Error: Incorrect information. Please check all fields and try again.';
-            verificationError.classList.remove('hidden');
+            // Login Failure: Use the provided error message
+            loginError.classList.remove('hidden');
         }
     });
 
@@ -335,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (signupBtn && backToLoginBtn) {
         signupBtn.addEventListener('click', () => {
             loginForm.classList.add('hidden');
-            verificationForm.classList.add('hidden'); // Hide Step 2 form
             signupMessageBox.classList.remove('hidden');
         });
         backToLoginBtn.addEventListener('click', () => {
@@ -348,16 +252,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadDashboardContent(buttonId) {
         if (!currentUser) return;
         const button = document.getElementById(buttonId);
-        // Clean up text content
         const title = button.textContent.replace(' ', '').trim(); 
         
-        // Update main header
         dashboardContent.querySelector('h2').textContent = title;
-        
-        // Update Placeholder content
         contentPlaceholder.innerHTML = `<p>Loading data for <strong>${title}</strong>... This section is under development.</p>`;
         
-        // Activate the menu button
         sidebarButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
     }
@@ -387,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, INACTIVITY_LIMIT);
     }
 
-    // Reset timer on user activity
     ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
         document.addEventListener(evt, resetInactivityTimer);
     });
@@ -396,15 +294,10 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardLayout.classList.add('hidden');
         loginPage.classList.remove('hidden');
         loginForm.reset();
-        verificationForm.reset(); // Clear Step 2 fields
-        loginForm.classList.remove('hidden'); // Show Step 1 form
-        verificationForm.classList.add('hidden'); // Hide Step 2 form
         
         loginError.classList.add('hidden');
-        verificationError.classList.add('hidden');
 
         currentUser = null;
-        stepOneSuccessRow = null; // Clear Step 1 data
         
         progressContainer.classList.add('hidden');
         sidebarButtons.forEach(btn => btn.classList.remove('active'));
