@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingOverlay.classList.add('hidden');
 
         if (stepOneSuccessRow) {
-            // ✅ Step 1 Success: Show Step 2 form
+            // Step 1 Success: Show Step 2 form
             loginForm.classList.add('hidden');
             verificationForm.classList.remove('hidden');
             // Clear Step 1 fields
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ceu-number-login').value = '';
 
         } else {
-            // ❌ Step 1 Failure
+            // Step 1 Failure
             loginError.classList.remove('hidden');
         }
     });
@@ -195,9 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get column indices
         const nameIndex = csvData.headers.indexOf('name');
         const lastnameIndex = csvData.headers.indexOf('lastname');
-        // 👇👇 اصلاح شده: برای مطابقت دقیق با ستون شیت شما ("Date of birth")
+        // Column name must match the Google Sheet header exactly: "Date of birth"
         const dobIndex = csvData.headers.indexOf('Date of birth'); 
-        // 👆👆 اصلاح شده
+        
         const nationalityIndex = csvData.headers.indexOf('nationality');
         const passportIndex = csvData.headers.indexOf('passportNumber');
         const nationalIDIndex = csvData.headers.indexOf('nationalIDNumber');
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingOverlay.classList.add('hidden');
 
         if (isMatch) {
-            // ✅ Step 2 Success: Final Login
+            // Step 2 Success: Final Login
             
             // Populate currentUser object with all row data
             currentUser = {};
@@ -251,13 +251,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const progress = calculateProgress(currentUser);
             updateProgressUI(progress);
 
-            // ✅ Start timer and load initial content
+            // Start timer and load initial content
             loadDashboardContent('application-form-btn');
             document.getElementById('application-form-btn').classList.add('active');
             startInactivityTimer();
 
         } else {
-            // ❌ Step 2 Failure
+            // Step 2 Failure
             verificationError.textContent = 'Error: Incorrect information. Please check all fields and try again.';
             verificationError.classList.remove('hidden');
         }
@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentUser) return;
         const button = document.getElementById(buttonId);
         // Clean up text content
-        const title = button.textContent.replace(' ', '').trim(); 
+        const title = button.textContent.replace(' ', '').trim(); 
         
         // Update main header
         dashboardContent.querySelector('h2').textContent = title;
