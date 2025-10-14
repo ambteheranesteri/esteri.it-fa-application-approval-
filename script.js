@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Replace this with your real Google Sheet CSV link ---
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/1iGQNZWDl_4n53u4T-otJvsuA_3ooKJjmF12KvQDY_JU/gviz/tq?tqx=out:csv&sheet=Dashboar%201';
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQmwyY9o-_Uupjvr1i_f8bVWr8g87FxkZLKeDeIxAHmXlNFP4q6uhx7yCcJv9z-lZq8NZ4EYL6OgUul/pub?gid=0&single=true&output=csv';
     // Example:
     // const sheetURL = 'https://docs.google.com/spreadsheets/d/1iGQNZWDl_4n53u4T-otJvsuA_3ooKJjmF12KvQDY_JU/gviz/tq?tqx=out:csv&sheet=Dashboar%201';
 
@@ -174,5 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
 
 
