@@ -1,78 +1,61 @@
-const userData = [
-  {
-    username: "BIBI SAYEDA",
-    password: "IT457219308",
-    ceuNumber: "ITA/IRN/2025/457219308",
-    name: "BIBI SAYEDA",
-    lastname: "HUSSAIN KHAIL",
-    nationality: "AFGHAN",
-    passportNumber: "0700-04573",
-    nationalIDNumber: "0700-04573",
-    gender: "Female",
-    links: {
-      finalResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025457219308.pdf",
-      uploadPassport: "https://example.com/mashal-passport",
-      uploadDocuments: "https://example.com/mashal-docs",
-      AppointmentResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025457219308.pdf",
-      unhcrLetter: "https://example.com/mashal-unhcr",
-      uploadFinger: "https://example.com/mashal-finger"
-    }
-  },
-  {
-    username: "ABDUL GHAFOOR",
-    password: "IT659349731",
-    ceuNumber: "ITA/IRN/2025/659349731",
-    name: "ABDUL GHAFOOR",
-    lastname: "HAKIMI",
-    nationality: "AFGHAN",
-    passportNumber: "P00766839",
-    nationalIDNumber: "0600-20650",
-    gender: "male",
-    links: {
-      finalResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025659349731.pdf",
-      uploadPassport: "https://example.com/mashal2-passport",
-      uploadDocuments: "https://example.com/mashal2-docs",
-      unhcrLetter: "https://example.com/mashal2-unhcr",
-      uploadFinger: "https://example.com/mashal2-finger"
-    }
-  },
-    {
-    username: "SAYED JAMSHID",
-    password: "IT197531842",
-    ceuNumber: "64511169",
-    name: "SAYED JAMSHID",
-    lastname: "HUSSAINI",
-    nationality: "AFGHAN",
-    passportNumber: "P01550807",
-    nationalIDNumber: "1400-0101-12696",
-    gender: "male",
-    links: {
-      finalResult: "https://ambteheranesteri.github.io/approval-result-view/ITTEH-2025-5601612473-appointment.pdf",
-      uploadPassport: "https://example.com/mashal2-passport",
-      uploadDocuments: "https://example.com/mashal2-docs",
-      AppointmentResult: "https://ambteheranesteri.github.io/approval-result-view/ITTEH-2025-5601612473-appointment.pdf",
-      unhcrLetter: "https://example.com/mashal2-unhcr",
-      uploadFinger: "https://example.com/mashal2-finger"
-    }
-  },
-  {
-    username: "MASHAL SAIDY",
-    password: "IT761319690",
-    ceuNumber: "ITA/IRN/2025/761319690",
-    name: "MASHAL",
-    lastname: "SAIDY",
-    nationality: "AFGHAN",
-    passportNumber: "30811641",
-    nationalIDNumber: "30811641",
-    gender: "Female",
-    links: {
-      finalResult: "https://ambteheranesteri.github.io/approval-result-view/ITAIRN2025761319690.pdf",
-      uploadPassport: "https://example.com/farah-passport",
-      uploadDocuments: "https://example.com/farah-docs",
-      unhcrLetter: "https://example.com/farah-unhcr",
-      uploadFinger: "https://example.com/farah-finger"
-    }
+// ✅ data.js - خواندن داده از Google Sheet به جای داده‌ی ثابت
+
+// لینک CSV شیت خود را اینجا بگذار 👇
+const sheetUrl = "https://docs.google.com/spreadsheets/d/1iGQNZWDl_4n53u4T-otJvsuA_3ooKJjmF12KvQDY_JU/gviz/tq?tqx=out:csv";
+
+async function loadUserData() {
+  try {
+    const response = await fetch(sheetUrl);
+    const csv = await response.text();
+
+    // جدا کردن سطرها و ستون‌ها
+    const rows = csv.split("\n").map(r => r.split(","));
+    const headers = rows.shift().map(h => h.trim());
+
+    // ساخت داده‌ها
+    const userData = rows
+      .filter(row => row.some(cell => cell.trim() !== "")) // حذف ردیف‌های خالی
+      .map(row => {
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = row[i] ? row[i].trim() : "";
+        });
+
+        // بخش لینک‌ها
+        obj.links = {
+          finalResult: obj.finalResult,
+          applicationForm: obj.applicationForm,
+          uploadPassport: obj.uploadPassport,
+          uploadPhoto: obj.uploadPhoto,
+          uploadIdentityDocs: obj.uploadIdentityDocs,
+          viewUNHCRLetter: obj.viewUNHCRLetter,
+          uploadProofOfDanger: obj.uploadProofOfDanger,
+          uploadResidenceDocs: obj.uploadResidenceDocs,
+          uploadEducationJobDocs: obj.uploadEducationJobDocs,
+          viewAppointmentDetails: obj.viewAppointmentDetails,
+          viewPaymentConfirmation: obj.viewPaymentConfirmation,
+          uploadFingerprints: obj.uploadFingerprints,
+          trackApplicationStatus: obj.trackApplicationStatus,
+          finalReviewChecklist: obj.finalReviewChecklist,
+          interviewGuideFaqs: obj.interviewGuideFaqs,
+          downloadVisaLetter: obj.downloadVisaLetter,
+          downloadAllDocsInfo: obj.downloadAllDocsInfo
+        };
+
+        return obj;
+      });
+
+    console.log("✅ داده‌ها از Google Sheet بارگذاری شدند:", userData);
+    return userData;
+  } catch (error) {
+    console.error("❌ خطا در بارگذاری داده‌ها:", error);
+    return [];
   }
-];
+}
 
-
+// اگر می‌خواهی هنگام لود صفحه داده‌ها آماده باشند:
+let userData = [];
+loadUserData().then(data => {
+  userData = data;
+  console.log("📦 userData آماده است:", userData);
+});
