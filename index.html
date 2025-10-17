@@ -1,39 +1,167 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login with Survey</title>
-  <link rel="stylesheet" href="login.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>Italian Humanitarian Visa Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <main class="form-container">
-    <h2>Secure Applicant Portal</h2>
-
-    <form id="login-form">
-      <label for="username">Username:</label>
-      <input type="text" id="username" required>
-
-      <label for="password">Password:</label>
-      <input type="password" id="password" required>
-
-      <button type="submit">Login</button>
-    </form>
-
-    <div id="survey-container" class="hidden">
-      <h3>Survey</h3>
-      <p id="survey-question"></p>
-
-      <div id="survey-options"></div>
-      <button id="submit-survey-btn">Submit Survey</button>
+    
+    <div id="loading-overlay" class="hidden">
+        <div class="loading-spinner">
+            <img src="loading.gif" alt="Processing..." id="loading-gif">
+        </div>
     </div>
 
-    <p id="result-message" class="hidden"></p>
-  </main>
+    <header class="official-header fixed-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="logo.png" alt="Italian Government Logo" class="logo">
+            </div>
+            <div class="title-section">
+                <h1 style="text-align: center; line-height: 1.4; margin: 0;">
+                    <a href="#"
+                       style="text-decoration: none; color: inherit; display: block; font-size: 28px; font-weight: 700; text-align: left;">
+                        Embassy of Italy in Tehran - Humanitarian Visa Portal
+                    </a>
+                    <br>
+                </h1>
 
-  <!-- فایل‌های جاوااسکریپت -->
-  <script src="data.js"></script>
-  <script src="script.js"></script>
+<p style="text-align: left; margin-right: 0; padding-right: 0; font-size: 13px;">
+    Ministry of Foreign Affairs and International Cooperation
+</p>
+</div>
+</div>
+</header>
+
+    <div class="header-spacer"></div>
+
+    <main id="main-content">
+        <section id="login-page" class="page-content">
+            <div class="form-container">
+                <h2>SECURE APPLICANT PORTAL</h2>
+                
+                <form id="login-form">
+                    <h3>LOG IN CEU </h3>
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ceu-number-login">CEU Number:</label>
+                        <input type="text" id="ceu-number-login" required>
+                    </div>
+                    
+                    <div class="button-group" style="direction: ltr;">
+                        <button type="submit" class="official-button" id="login-submit-btn">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <button type="button" class="official-button secondary-button" id="signup-btn">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </button>
+                    </div>
+
+                    <p id="login-error" class="error-message hidden">
+                        YOUR APPLICATION IS CURRENTLY BEING UPDATED IN THE VISAMETRIC SYSTEM IN TEHRAN, IRAN. PLEASE TRY AGAIN AFTER 24 HOURS
+                    </p>
+                </form>
+                
+                <div id="signup-message-box" class="info-box hidden" style="text-align: left; direction: ltr;">
+                    <h3>Registration Information</h3>
+                    
+ <p style="direction: ltr; text-align: left;"><strong>English:</strong> You can only create a user account through the **United Nations High Commissioner for Refugees (UNHCR)** office. To contact the UNHCR office in Iran, please send your request to the following official email addresses and phone numbers:</p>
+ <div class="contact-details" style="direction: ltr; text-align: left;">
+                        <p><i class="fas fa-envelope"></i> UNHCR Reception Email (Tehran): <a href="mailto:irnteprt@unhcr.org">irnteprt@unhcr.org</a></p>
+                        <p><i class="fas fa-envelope"></i> UN Registry Email (General Registration): <a href="mailto:rcs-iranregistry@un.org">rcs-iranregistry@un.org</a></p>
+                        <p><i class="fas fa-phone"></i> Reception Tel (Tehran): +98 21 88212520 (Calling Hours: Sunday to Wednesday 8:30 to 15:30)</p>
+                        <p><i class="fas fa-phone"></i> Office Tel (Tehran):+98 21 88212520</p>
+                    </div>
+           
+                    <button type="button" class="official-button back-button" id="back-to-login-btn" style="margin-top: 20px;">
+                        <i class="fas fa-arrow-left"></i> Back to Login Page
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="dashboard-layout" class="hidden">
+            <aside class="sidebar">
+                <div class="applicant-info">
+                    <i class="fas fa-user-circle fa-3x" id="info-icon" style="color: var(--main-blue);"></i>
+                    <h3 id="applicant-name">Loading...</h3>
+                    <p id="applicant-case-id">Case ID: Loading...</p>
+                </div>
+                
+                <div class="menu-section-title">Application Submission</div>
+                 <button id="application-form-btn" class="dashboard-button active"><i class="fas fa-file-alt"></i> Application Form</button>
+                <button id="upload-passport-btn" class="dashboard-button"><i class="fas fa-passport"></i> Upload Passport</button>
+                <button id="upload-passport-btn" class="dashboard-button"><i class="fas fa-passport"></i> Upload Passport</button>
+                <button id="upload-photo-btn" class="dashboard-button"><i class="fas fa-camera"></i> Upload Photo</button>
+                <button id="upload-identity-btn" class="dashboard-button"><i class="fas fa-id-card"></i> Upload Identity Docs</button>
+                
+                <div class="menu-section-title">Supporting Evidence</div>
+                <button id="unhcr-letter-btn" class="dashboard-button"><i class="fas fa-hands-helping"></i> View UNHCR REG Letter</button>
+                <button id="upload-danger-btn" class="dashboard-button"><i class="fas fa-exclamation-triangle"></i> Upload Proof of Danger</button>
+                <button id="upload-residence-btn" class="dashboard-button"><i class="fas fa-home"></i> Upload Residence Docs</button>
+                <button id="upload-education-btn" class="dashboard-button"><i class="fas fa-graduation-cap"></i> Upload Educational/Job Docs</button>
+                
+                <div class="menu-section-title">Interview Management</div>
+                <button id="appointment-details-btn" class="dashboard-button"><i class="fas fa-calendar-alt"></i> Appointment Details</button>
+                <button id="payment-confirm-btn" class="dashboard-button"><i class="fas fa-euro-sign"></i> Payment Fee Confirmation</button>
+                <button id="upload-finger-btn" class="dashboard-button"><i class="fas fa-fingerprint"></i> Upload Finger Prints</button>
+                <button id="track-status-btn" class="dashboard-button"><i class="fas fa-cogs"></i> Track Application Status</button>
+
+                <div class="menu-section-title">Final Decision</div>
+                <button id="final-checklist-btn" class="dashboard-button"><i class="fas fa-clipboard-check"></i> Final Review Checklist</button>
+                <button id="interview-guide-btn" class="dashboard-button"><i class="fas fa-book"></i> Interview Guide & FAQs</button>
+                <button id="final-result-btn" class="dashboard-button"><i class="fas fa-gavel"></i> **Final Result**</button>
+                <button id="download-visa-btn" class="dashboard-button"><i class="fas fa-file-download"></i> Download Visa Letter</button>
+
+                <div style="padding: 20px;">
+                    <button id="logout-btn" class="official-button logout-button">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </aside>
+
+            <section class="dashboard-content">
+                <h2>Welcome to Your Humanitarian Visa Dashboard</h2>
+                <p>This secure portal allows you to manage your application, upload required documentation, track your status, and view your final interview result. Please ensure all documents are uploaded by the specified deadlines.</p>
+                
+                <div id="content-placeholder"></div>
+            </section>
+        </section>
+    </main>
+
+    <div id="progress-container" class="hidden">
+        <div id="progress-bar">
+            <div id="progress-bar-fill"></div>
+        </div>
+        <p id="progress-message">Processing...</p>
+    </div>
+
+    <footer class="official-footer">
+      <div class="footer-content footer-contact-info">
+        <div class="footer-address" style="direction: ltr; text-align: left;">
+          <p><strong>Embassy of Italy in Tehran</strong></p>
+          <p><i class="fas fa-phone-alt"></i> Tel: +98 21 6672 6955</p>
+          <p><i class="fas fa-envelope"></i> E-mail: segreteria.teheran@esteri.it</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
+
+
+
+
+
